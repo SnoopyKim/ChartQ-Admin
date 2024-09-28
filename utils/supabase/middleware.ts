@@ -1,3 +1,4 @@
+import UserType from "@/types/user-type";
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
@@ -22,30 +23,49 @@ export const updateSession = async (request: NextRequest) => {
           },
           setAll(cookiesToSet) {
             cookiesToSet.forEach(({ name, value }) =>
-              request.cookies.set(name, value),
+              request.cookies.set(name, value)
             );
             response = NextResponse.next({
               request,
             });
             cookiesToSet.forEach(({ name, value, options }) =>
-              response.cookies.set(name, value, options),
+              response.cookies.set(name, value, options)
             );
           },
         },
-      },
+      }
     );
 
     // This will refresh session if expired - required for Server Components
     // https://supabase.com/docs/guides/auth/server-side/nextjs
     const user = await supabase.auth.getUser();
-
-    // protected routes
-    if (request.nextUrl.pathname.startsWith("/protected") && user.error) {
+    if (request.nextUrl.pathname !== "/sign-in" && user.error) {
+      // 로그인 정보가 없으면 로그인 페이지로
+      console.log("Redirect to Sign in");
       return NextResponse.redirect(new URL("/sign-in", request.url));
     }
 
-    if (request.nextUrl.pathname === "/" && !user.error) {
-      return NextResponse.redirect(new URL("/protected", request.url));
+    if (!user.error) {
+      if (request.nextUrl.pathname === "/sign-in") {
+        // 로그인 정보가 있는데 로그인 페이지로 가려하면 메인으로
+        console.log("Redirect to Main");
+        return NextResponse.redirect(new URL("/", request.url));
+      }
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select()
+        .eq("id", user.data.user?.id)
+        .single();
+
+      if (
+        request.nextUrl.pathname !== "/access-denied" &&
+        !(profile && profile.type === UserType.ADMIN)
+      ) {
+        // 로그인한 유저가 관리자가 아니면 접근 금지 페이지로
+        console.log("Redirect to Access Denied");
+        return NextResponse.redirect(new URL("/access-denied", request.url));
+      }
     }
 
     return response;
