@@ -3,6 +3,7 @@
 import { getUserProfiles } from "@/services/users";
 import Profile from "@/types/user-profile";
 import { useEffect, useState } from "react";
+import UserTable from "./user-table";
 
 export default function UsersPage() {
   const [users, setUsers] = useState<Profile["Row"][]>([]);
@@ -15,16 +16,9 @@ export default function UsersPage() {
   }, []);
 
   return (
-    <div>
-      {users.map((user) => (
-        <div key={user.id}>
-          <p>{user.id}</p>
-          <p>{user.email}</p>
-          <p>{user.username}</p>
-          <p>{user.updated_at}</p>
-          <p>{user.created_at}</p>
-        </div>
-      ))}
+    <div className="container">
+      <h1 className="mb-4">User Management</h1>
+      <UserTable users={users} />
     </div>
   );
 }

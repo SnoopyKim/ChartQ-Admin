@@ -1,10 +1,20 @@
 import { cn } from "@/utils/cn";
-import { ChartColumnBig, LibraryBig, UsersRound } from "lucide-react";
+import {
+  ChartColumnBig,
+  LibraryBig,
+  UsersRound,
+  ChevronDown,
+  ChevronUp,
+  Search,
+} from "lucide-react";
 
 const icons = {
   "chart-column": ChartColumnBig,
   library: LibraryBig,
   users: UsersRound,
+  "chevron-down": ChevronDown,
+  "chevron-up": ChevronUp,
+  search: Search,
 };
 
 export type IconType = keyof typeof icons;

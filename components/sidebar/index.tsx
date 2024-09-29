@@ -7,7 +7,7 @@ export default function Sidebar() {
   return (
     <nav className="h-screen flex flex-col p-4 bg-white border-r border-slate-200 rounded-e-2xl">
       <Link href={"/"} className="text-black hover:no-underline">
-        <h1>ChartQ</h1>
+        <h1 className="text-4xl">ChartQ</h1>
       </Link>
       <div className="flex mt-4 flex-1 flex-col items-stretch gap-2">
         <NavItem href="/dashboard" icon={"chart-column"} title="대시보드" />
