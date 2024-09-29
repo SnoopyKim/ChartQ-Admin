@@ -7,8 +7,12 @@ export default function AdminLayout({
 }) {
   return (
     <div className="flex w-full h-screen">
-      <Sidebar />
-      <div className="flex flex-1 flex-col overflow-y-auto">{children}</div>
+      <div className="fixed w-52">
+        <Sidebar />
+      </div>
+      <div className="ml-52 flex flex-1 flex-col overflow-y-auto">
+        {children}
+      </div>
     </div>
   );
 }
