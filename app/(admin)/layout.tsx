@@ -10,8 +10,10 @@ export default function AdminLayout({
       <div className="fixed w-52">
         <Sidebar />
       </div>
-      <div className="ml-52 flex flex-1 flex-col overflow-y-auto">
-        {children}
+      <div className="ml-52 flex flex-1 flex-col overflow-y-auto p-4">
+        <div className="flex flex-col min-h-[calc(100vh-32px)] bg-white rounded-2xl p-4">
+          {children}
+        </div>
       </div>
     </div>
   );
