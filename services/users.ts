@@ -1,5 +1,3 @@
-"use client";
-
 import Profile from "@/types/user-profile";
 import { createClient } from "@/utils/supabase/client";
 import { QueryResult, QueryData, QueryError } from "@supabase/supabase-js";

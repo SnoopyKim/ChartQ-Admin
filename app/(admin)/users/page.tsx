@@ -17,7 +17,7 @@ export default function UsersPage() {
 
   return (
     <div className="container">
-      <h1 className="mb-4">User Management</h1>
+      <h1 className="mb-4">사용자 관리</h1>
       <UserTable users={users} />
     </div>
   );

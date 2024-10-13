@@ -6,6 +6,7 @@ import {
   ChevronDown,
   ChevronUp,
   Search,
+  FilePen,
 } from "lucide-react";
 
 const icons = {
@@ -15,6 +16,7 @@ const icons = {
   "chevron-down": ChevronDown,
   "chevron-up": ChevronUp,
   search: Search,
+  "file-pen": FilePen,
 };
 
 export type IconType = keyof typeof icons;

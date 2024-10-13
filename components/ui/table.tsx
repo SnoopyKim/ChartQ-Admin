@@ -1,3 +1,4 @@
+import { cn } from "@/utils/cn";
 import React from "react";
 
 export function Table({ children }: { children: React.ReactNode }) {
@@ -26,9 +27,20 @@ export function TableHead({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function TableCell({ children }: { children: React.ReactNode }) {
+export function TableCell({
+  className,
+  children,
+}: {
+  className?: string;
+  children: React.ReactNode;
+}) {
   return (
-    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+    <td
+      className={cn(
+        "px-6 py-4 whitespace-nowrap text-sm text-gray-900",
+        className
+      )}
+    >
       {children}
     </td>
   );
