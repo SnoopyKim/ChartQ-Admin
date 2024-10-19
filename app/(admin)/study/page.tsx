@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import StudyTable from "./study-table";
 import { addStudy, getStudyList } from "@/services/study";
 import Button from "@/components/ui/button";
+import Link from "next/link";
+import Icon from "@/components/ui/icon";
 
 export default function StudyListPage() {
   const [studyList, setStudyList] = useState<Study["Row"][]>([]);
@@ -17,19 +19,17 @@ export default function StudyListPage() {
     fetchStudyList();
   }, []);
 
-  const handleAddStudy = async () => {
-    const result = await addStudy({
-      title: "test",
-      content: { test: "test" },
-    });
-    console.log("Add study result: ", result);
-  };
-
   return (
     <div className="container">
-      <div className="flex justify-between">
+      <div className="flex justify-between items-center">
         <h1 className="mb-4">차트자료 관리</h1>
-        <Button onClick={handleAddStudy}>차트자료 추가</Button>
+        <Link
+          href={"/study/new"}
+          className="flex gap-2 items-center pl-3 pr-4 py-2 rounded bg-slate-700 text-white hover:bg-slate-900 hover:no-underline"
+        >
+          <Icon name="plus" className="w-5 h-5" />
+          차트자료 추가
+        </Link>
       </div>
       <StudyTable studyList={studyList} />
     </div>

@@ -51,7 +51,7 @@ export default function UserTable({ users }: { users: Profile["Row"][] }) {
         placeholder="Search users..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="max-w-sm border"
+        className="max-w-sm"
         icon={"search"}
       />
       <div className="rounded-md border mt-4 overflow-x-auto">

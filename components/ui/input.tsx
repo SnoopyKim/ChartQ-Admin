@@ -16,7 +16,7 @@ export function Input({ icon, className, ...props }: InputProps) {
       <input
         {...props}
         className={cn(
-          "block w-full px-3 py-2 rounded-md border-slate-300 shadow-sm focus:border-primary",
+          "block w-full px-3 py-2 border rounded-md border-slate-300 shadow-sm focus:border-primary",
           icon ? "pl-10" : "pl-3",
           className
         )}

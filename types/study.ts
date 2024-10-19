@@ -20,15 +20,7 @@ type Study = {
     title?: string;
     updated_at?: string;
   };
-  Relationships: [
-    {
-      foreignKeyName: "study_image_fkey";
-      columns: ["image"];
-      isOneToOne: false;
-      referencedRelation: "buckets";
-      referencedColumns: ["id"];
-    },
-  ];
+  Relationships: [];
 };
 
 export default Study;

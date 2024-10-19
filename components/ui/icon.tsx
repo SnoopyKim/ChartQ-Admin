@@ -7,6 +7,8 @@ import {
   ChevronUp,
   Search,
   FilePen,
+  Plus,
+  ImagePlus,
 } from "lucide-react";
 
 const icons = {
@@ -17,6 +19,8 @@ const icons = {
   "chevron-up": ChevronUp,
   search: Search,
   "file-pen": FilePen,
+  plus: Plus,
+  "image-plus": ImagePlus,
 };
 
 export type IconType = keyof typeof icons;

@@ -55,7 +55,7 @@ export default function StudyTable({
         placeholder="Search studies..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="max-w-sm border"
+        className="max-w-sm"
         icon={"search"}
       />
       <div className="rounded-md border mt-4 overflow-x-auto">
