@@ -9,6 +9,7 @@ import {
   FilePen,
   Plus,
   ImagePlus,
+  Trash2,
 } from "lucide-react";
 
 const icons = {
@@ -21,6 +22,7 @@ const icons = {
   "file-pen": FilePen,
   plus: Plus,
   "image-plus": ImagePlus,
+  trash: Trash2,
 };
 
 export type IconType = keyof typeof icons;

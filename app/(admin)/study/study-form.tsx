@@ -1,22 +1,16 @@
 "use client";
 
 import Button from "@/components/ui/button";
+import EditorContainer from "@/components/ui/editor/container";
 import ImageUploader from "@/components/ui/image-uploader";
 import { Input } from "@/components/ui/input";
+import { addStudy } from "@/services/study";
 import Study from "@/types/study";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export default function StudyForm({
-  study,
-  onSubmit,
-}: {
-  study?: Study["Update"];
-  onSubmit: (data: {
-    title: string;
-    image: File | null;
-    content: object;
-  }) => Promise<void>;
-}) {
+export default function StudyForm({ study }: { study?: Study["Update"] }) {
+  const router = useRouter();
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -26,7 +20,13 @@ export default function StudyForm({
     const title = formData.get("title") as string;
     const content = { content: formData.get("content") as string };
 
-    await onSubmit({ title, content, image: uploadedImage });
+    if (study) {
+      // TODO: update study
+    } else {
+      const id = await addStudy({ title, content });
+      alert("성공적으로 추가되었습니다!\n내용 작성 화면으로 이동합니다");
+      router.replace(`/study/${id}/?step=content`);
+    }
   };
 
   return (
@@ -44,12 +44,6 @@ export default function StudyForm({
           onFileSelect={setUploadedImage}
         />
       </div>
-      <p>내용</p>
-      <textarea
-        name="content"
-        defaultValue={JSON.stringify(study?.content)}
-        className="w-full h-96 border"
-      />
 
       <div className="flex justify-between items-center mt-4">
         <Button

@@ -1,8 +1,4 @@
-import AuthButton from "@/components/ui/button/sign-out";
-import { GeistSans } from "geist/font/sans";
-import Link from "next/link";
 import "./globals.css";
-import Sidebar from "@/components/sidebar";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -20,7 +16,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={GeistSans.className} suppressHydrationWarning>
+    <html lang="ko" suppressHydrationWarning>
       <body className="bg-slate-100 text-black">
         <div className="min-h-screen w-full">{children}</div>
       </body>

@@ -37,7 +37,7 @@ export function TableCell({
   return (
     <td
       className={cn(
-        "px-6 py-4 whitespace-nowrap text-sm text-gray-900",
+        "px-5 py-3 whitespace-nowrap text-sm text-gray-900",
         className
       )}
     >

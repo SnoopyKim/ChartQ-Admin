@@ -13,13 +13,23 @@ import {
 import Button from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
 import Study from "@/types/study";
-import { DropdownMenu } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
+import Link from "next/link";
+import { deleteStudy } from "@/services/study";
+import { useRouter } from "next/navigation";
 
 export default function StudyTable({
   studyList,
 }: {
   studyList: Study["Row"][];
 }) {
+  const router = useRouter();
+
   const [searchTerm, setSearchTerm] = useState("");
   const [sortKey, setSortKey] = useState<keyof Study["Row"]>("id");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
@@ -31,6 +41,22 @@ export default function StudyTable({
       setSortKey(key);
       setSortOrder("asc");
     }
+  };
+
+  const handleDelete = async (id: string) => {
+    const confirmResult = confirm("정말 삭제하시겠습니까?");
+    if (!confirmResult) {
+      return;
+    }
+
+    const result = await deleteStudy(id);
+    if (!result) {
+      alert("삭제 중 문제가 발생했습니다");
+      return;
+    }
+
+    alert("성공적으로 삭제되었습니다!");
+    router.refresh();
   };
 
   const sortedAndFilteredStudys = studyList
@@ -89,9 +115,20 @@ export default function StudyTable({
 
                 <TableCell>{study.updated_at}</TableCell>
                 <TableCell className="w-0">
-                  <DropdownMenu>
-                    <Icon name="file-pen" className="h-4 w-4" />
-                  </DropdownMenu>
+                  <div className="flex gap-2">
+                    <Link
+                      href={`/study/${study.id}`}
+                      className="p-1.5 rounded hover:bg-gray-200"
+                    >
+                      <Icon name="file-pen" className="h-5 w-5" />
+                    </Link>
+                    <div
+                      className="p-1.5 rounded hover:bg-gray-200 cursor-pointer"
+                      onClick={() => handleDelete(study.id)}
+                    >
+                      <Icon name="trash" className="h-5 w-5" />
+                    </div>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
