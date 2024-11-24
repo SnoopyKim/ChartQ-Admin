@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Icon from "./icon";
+import { Label } from "../shadcn/label";
+import Image from "next/image";
 
 interface ImageUploaderProps {
   labelText?: string;
@@ -14,8 +16,13 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   defaultValue,
   onFileSelect,
 }) => {
-  const [preview, setPreview] = useState<string | undefined>(defaultValue);
+  const [preview, setPreview] = useState<string | undefined>();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  useEffect(() => {
+    if (defaultValue) {
+      setPreview(defaultValue);
+    }
+  }, [defaultValue]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -36,20 +43,19 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
 
   return (
     <div className="w-full">
-      <label className="block text-gray-700 text-sm font-bold mb-2">
-        {labelText}
-      </label>
+      <Label>{labelText}</Label>
       <div
-        className={`relative border-dashed border-2 ${
+        className={`relative mt-2 border-dashed border-2 ${
           preview ? "border-transparent p-0" : "border-gray-400 p-4"
         } rounded-lg h-64 flex justify-center items-center cursor-pointer`}
         onClick={handleClick}
       >
         {preview ? (
-          <img
+          <Image
             src={preview}
+            fill
             alt="Uploaded Image"
-            className="max-h-full max-w-full object-contain hover:opacity-75"
+            className="object-contain hover:opacity-75"
           />
         ) : (
           <div className="flex flex-col items-center">

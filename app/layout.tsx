@@ -1,3 +1,4 @@
+import { Toaster } from "@/components/shadcn/toaster";
 import "./globals.css";
 
 const defaultUrl = process.env.VERCEL_URL
@@ -19,6 +20,7 @@ export default function RootLayout({
     <html lang="ko" suppressHydrationWarning>
       <body className="bg-slate-100 text-black">
         <div className="min-h-screen w-full">{children}</div>
+        <Toaster />
       </body>
     </html>
   );

@@ -1,24 +1,22 @@
 type Study = {
   Row: {
-    content: object;
     id: string;
-    image: string | null;
     title: string;
+    category?: string;
+    image?: string;
+    content?: string;
     updated_at: string;
   };
   Insert: {
-    content: object;
-    id?: string;
-    image?: string | null;
-    title?: string;
-    updated_at?: string;
+    title: string;
+    category: string;
+    image?: string;
   };
   Update: {
-    content?: object;
-    id?: string;
-    image?: string | null;
+    id: string;
     title?: string;
-    updated_at?: string;
+    category?: string;
+    image?: string;
   };
   Relationships: [];
 };
