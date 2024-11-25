@@ -100,6 +100,20 @@ export async function updateStudy(newStudy: {
   return true;
 }
 
+export async function updateStudyContent(
+  id: string,
+  content: string
+): Promise<boolean> {
+  const { error } = await supabase
+    .from("study")
+    .update({ content })
+    .eq("id", id);
+  if (error) {
+    return false;
+  }
+  return true;
+}
+
 export async function deleteStudy(id: string): Promise<boolean> {
   const { error } = await createClient().from("study").delete().eq("id", id);
 

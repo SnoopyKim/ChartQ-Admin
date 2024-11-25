@@ -15,12 +15,20 @@ export default function NewStudyPage() {
     category: string;
     image?: File;
   }) => {
-    const result = await addStudy(data);
-    if (result) {
+    const { data: result, error } = await addStudy(data);
+    if (error || !result) {
       toast({
-        title: "성공적으로 추가되었습니다!",
+        variant: "error",
+        title: "차트자료 추가에 실패했습니다.",
       });
+      return;
     }
+
+    router.push(`/study/${result.id}`);
+    toast({
+      variant: "success",
+      title: "성공적으로 추가되었습니다!",
+    });
   };
 
   return (

@@ -23,8 +23,8 @@ export default function NavItem({
       className={cn(
         "flex gap-2 items-center p-2 rounded hover:no-underline",
         isActive
-          ? "text-black bg-slate-100"
-          : "text-slate-500 hover:text-black hover:bg-slate-100"
+          ? "text-foreground bg-secondary/50"
+          : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
       )}
     >
       <Icon name={icon} className="" />
