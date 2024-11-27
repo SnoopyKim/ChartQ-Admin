@@ -14,6 +14,7 @@ import {
 } from "@/components/shadcn/dialog";
 import { Input } from "@/components/shadcn/input";
 import { Label } from "@/components/shadcn/label";
+import { useDialog } from "@/hooks/use-dialog";
 import { toast } from "@/hooks/use-toast";
 import { addTag, deleteTag, getTagList } from "@/services/tag";
 import Tag from "@/types/tag";
@@ -21,6 +22,7 @@ import { Plus, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function TagPage() {
+  const { openDialog } = useDialog();
   const [tags, setTags] = useState<Tag[]>([]);
   useEffect(() => {
     const fetchTags = async () => {
@@ -39,6 +41,12 @@ export default function TagPage() {
   }, []);
 
   const handleDeleteTag = async (id: string) => {
+    const isConfirmed = await openDialog({
+      title: "태그 삭제",
+      description: "정말로 태그를 삭제하시겠습니까?",
+    });
+    if (!isConfirmed) return;
+
     const { error } = await deleteTag(id);
     if (error) {
       toast({

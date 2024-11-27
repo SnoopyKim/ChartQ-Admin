@@ -2,6 +2,7 @@
 
 import {
   addImageToStorage,
+  deleteStudy,
   getStudy,
   updateStudy,
   updateStudyContent,
@@ -15,6 +16,9 @@ import { useState, useEffect } from "react";
 import Study from "@/types/study";
 import { Button } from "@/components/shadcn/button";
 import Tag from "@/types/tag";
+import { Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useDialog } from "@/hooks/use-dialog";
 
 export default function StudyEditPage({
   params,
@@ -23,6 +27,8 @@ export default function StudyEditPage({
   params: { id: string };
   searchParams: { step: string };
 }) {
+  const router = useRouter();
+  const { openDialog } = useDialog();
   const [study, setStudy] = useState<Study["Row"]>();
   const [content, setContent] = useState<string>(""); // 상태 타입을 명시적으로 설정
   const [isSaving, setIsSaving] = useState(false);
@@ -32,8 +38,13 @@ export default function StudyEditPage({
       const { data, error } = await getStudy(params.id);
       if (error || !data) {
         toast({
-          title: "차트자료를 불러오는데 실패했습니다.",
+          variant: "error",
+          title: "차트자료 불러오기 실패",
+          description: error?.message || "알 수 없는 오류가 발생했습니다",
         });
+        if (error?.code === "NOT_FOUND") {
+          router.replace("/study");
+        }
         return;
       }
       setStudy(data);
@@ -67,6 +78,7 @@ export default function StudyEditPage({
     const result = await updateStudy(newStudy);
     if (result) {
       toast({
+        variant: "success",
         title: "성공적으로 수정되었습니다!",
       });
     }
@@ -122,6 +134,28 @@ export default function StudyEditPage({
     }
   };
 
+  const handleDeleteStudy = async () => {
+    const isConfirmed = await openDialog({
+      title: "차트자료 삭제",
+      description: "정말로 삭제하시겠습니까?",
+    });
+    if (!isConfirmed) return;
+
+    const result = await deleteStudy(params.id);
+    if (result) {
+      toast({
+        variant: "success",
+        title: "삭제되었습니다.",
+      });
+      router.push("/study");
+    } else {
+      toast({
+        variant: "error",
+        title: "삭제에 실패했습니다.",
+      });
+    }
+  };
+
   // Base64 문자열을 File 객체로 변환하는 함수
   const base64ToFile = (base64: string, filename = "image.png") => {
     const arr = base64.split(",");
@@ -164,7 +198,13 @@ export default function StudyEditPage({
           </Link>
         )}
       </div>
-      <h1 className="my-4">차트자료 편집</h1>
+      <div className="flex gap-2 items-center">
+        <h1 className="my-4">차트자료 편집</h1>
+        <Trash2
+          className="w-10 h-10 text-error cursor-pointer p-2 hover:bg-error/10 rounded-md"
+          onClick={handleDeleteStudy}
+        />
+      </div>
       <div>
         {searchParams.step === "content" ? (
           <Editor content={content || ""} onChange={setContent} />

@@ -16,7 +16,7 @@ import {
 export default function UsersPage() {
   const [users, setUsers] = useState<Profile["Row"][]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 20;
 
   useEffect(() => {
     const fetchUsers = async () => {

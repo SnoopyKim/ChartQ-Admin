@@ -6,13 +6,14 @@ import Study from "@/types/study";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/shadcn/button";
 import { useRouter } from "next/navigation";
+import Tag from "@/types/tag";
 
 export default function NewStudyPage() {
   const router = useRouter();
 
   const handleAddStudy = async (data: {
     title: string;
-    category: string;
+    tags: Partial<Tag>[];
     image?: File;
   }) => {
     const { data: result, error } = await addStudy(data);

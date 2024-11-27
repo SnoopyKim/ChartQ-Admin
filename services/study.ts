@@ -89,7 +89,7 @@ export async function getStudies(): Promise<{
 
 export async function getStudy(
   id: string
-): Promise<{ data?: Study["Row"]; error?: any }> {
+): Promise<{ data?: Study["Row"]; error?: Partial<PostgrestError> }> {
   const { data, error } = await supabase
     .from("study")
     .select(`*, study_tags!left (tag (id, name))`)
@@ -97,6 +97,14 @@ export async function getStudy(
 
   if (error) {
     return { error };
+  }
+  if (!data || data.length === 0) {
+    return {
+      error: {
+        code: "NOT_FOUND",
+        message: "해당 자료는 존재하지 않습니다.",
+      },
+    };
   }
 
   const result = {
@@ -113,7 +121,7 @@ export async function addStudy(postData: {
   title: string;
   tags: Partial<Tag>[];
   image?: File;
-}): Promise<{ data?: Study["Row"]; error?: any }> {
+}): Promise<{ data?: Study["Row"]; error?: PostgrestError }> {
   const { image, tags, ...newStudy } = postData;
   const { data: study, error: studyError } = await supabase
     .from("study")
@@ -121,7 +129,7 @@ export async function addStudy(postData: {
     .select()
     .single();
   if (studyError || !study) {
-    return { error: studyError };
+    return { error: studyError || undefined };
   }
 
   if (tags) {

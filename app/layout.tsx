@@ -1,5 +1,7 @@
 import { Toaster } from "@/components/shadcn/toaster";
 import "./globals.css";
+import { DialogProvider } from "@/hooks/use-dialog";
+import DialogManager from "@/components/dialog-manager";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -19,7 +21,10 @@ export default function RootLayout({
   return (
     <html lang="ko" suppressHydrationWarning>
       <body className="bg-slate-100 text-black">
-        <div className="min-h-screen w-full">{children}</div>
+        <DialogProvider>
+          <div className="min-h-screen w-full">{children}</div>
+          <DialogManager />
+        </DialogProvider>
         <Toaster />
       </body>
     </html>
