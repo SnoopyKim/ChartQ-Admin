@@ -14,6 +14,7 @@ import { toast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
 import Study from "@/types/study";
 import { Button } from "@/components/shadcn/button";
+import Tag from "@/types/tag";
 
 export default function StudyEditPage({
   params,
@@ -43,10 +44,27 @@ export default function StudyEditPage({
 
   const handleUpdateStudy = async (data: {
     title: string;
-    category: string;
+    tags: Partial<Tag>[];
     image?: File;
   }) => {
-    const result = await updateStudy({ id: params.id, ...data });
+    const newStudy: any = {
+      id: params.id,
+      title: data.title,
+      tags: data.tags,
+    };
+
+    if (data.image) {
+      const { data: imgUrl, error: imgError } = await addImageToStorage(
+        "study",
+        data.image,
+        `${params.id}/image.png`
+      );
+      if (imgError || !imgUrl) {
+        return;
+      }
+      newStudy.image = imgUrl;
+    }
+    const result = await updateStudy(newStudy);
     if (result) {
       toast({
         title: "성공적으로 수정되었습니다!",

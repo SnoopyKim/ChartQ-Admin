@@ -1,41 +1,120 @@
 import Study from "@/types/study";
+import Tag from "@/types/tag";
 import { createClient } from "@/utils/supabase/client";
+import { PostgrestError } from "@supabase/supabase-js";
 
 const supabase = createClient();
 
-export async function getStudyList(category: string): Promise<{
+export async function getStudiesByTag(tagId: string): Promise<{
   data?: Study["Row"][];
-  error?: any;
+  error?: PostgrestError;
 }> {
   const { data, error } = await supabase
-    .from("study")
-    .select("id, title, image, updated_at")
-    .eq("category", category);
+    .from("study_tags")
+    .select("study(id, title, image, updated_at, study_tags(tag(*)))") // studies 테이블의 데이터를 가져옴
+    .eq("tag_id", tagId);
+
   if (error) {
+    console.error(error);
     return { error };
   }
 
-  return { data: data as Study["Row"][] };
+  // 응답 데이터 구조 정리
+  const formattedData = data?.map((d: { study: any }) => ({
+    id: d.study.id,
+    title: d.study.title,
+    image: d.study.image,
+    tags: d.study.study_tags.map((st: any) => st.tag) as Tag[],
+    updated_at: d.study.updated_at,
+  }));
+
+  return { data: formattedData as Study["Row"][] };
+}
+
+// tag가 없는 study 검색
+export async function getStudiesWithNoTags(): Promise<{
+  data?: Study["Row"][];
+  error?: PostgrestError;
+}> {
+  const { data, error } = await supabase
+    .from("study")
+    .select(
+      `id, title, image, updated_at,
+      study_tags!left (tag (id, name))
+    `
+    )
+    .is("study_tags", null); // study_tags가 없는 경우만 가져옴
+
+  if (error) {
+    console.error(error);
+    return { error };
+  }
+
+  // study_tags를 tags로 변환하고 null을 빈 배열로 변경
+  const result = data.map((study) => ({
+    ...study,
+    tags: study.study_tags
+      ? (study.study_tags.map((st: any) => st.tags) as Tag[])
+      : [],
+  }));
+
+  return { data: result as Study["Row"][] };
+}
+
+export async function getStudies(): Promise<{
+  data?: Study["Row"][];
+  error?: PostgrestError;
+}> {
+  const { data, error } = await supabase.from("study").select(
+    `id, title, image, updated_at,
+      study_tags!left (tag (id, name))
+    `
+  );
+
+  if (error) {
+    console.error(error);
+    return { error };
+  }
+
+  // study_tags를 tags로 변환하고 null을 빈 배열로 변경
+  const result = data.map((study) => ({
+    ...study,
+    tags: study.study_tags
+      ? (study.study_tags.map((st: any) => st.tags) as Tag[])
+      : [],
+  }));
+
+  return { data: result as Study["Row"][] };
 }
 
 export async function getStudy(
   id: string
 ): Promise<{ data?: Study["Row"]; error?: any }> {
-  const { data, error } = await supabase.from("study").select().eq("id", id);
+  const { data, error } = await supabase
+    .from("study")
+    .select(`*, study_tags!left (tag (id, name))`)
+    .eq("id", id);
 
   if (error) {
     return { error };
   }
 
-  return { data: data[0] as Study["Row"] };
+  const result = {
+    ...data[0],
+    tags: data[0].study_tags
+      ? (data[0].study_tags.map((st: any) => st.tag) as Tag[])
+      : [],
+  };
+
+  return { data: result as Study["Row"] };
 }
 
 export async function addStudy(postData: {
   title: string;
-  category: string;
+  tags: Partial<Tag>[];
   image?: File;
 }): Promise<{ data?: Study["Row"]; error?: any }> {
-  const { image, ...newStudy } = postData;
+  const { image, tags, ...newStudy } = postData;
   const { data: study, error: studyError } = await supabase
     .from("study")
     .insert(newStudy)
@@ -43,6 +122,15 @@ export async function addStudy(postData: {
     .single();
   if (studyError || !study) {
     return { error: studyError };
+  }
+
+  if (tags) {
+    await supabase.from("study_tags").insert(
+      tags.map((tag) => ({
+        study_id: study.id,
+        tag_id: tag.id,
+      }))
+    );
   }
 
   if (image) {
@@ -66,33 +154,25 @@ export async function addStudy(postData: {
 export async function updateStudy(newStudy: {
   id: string;
   title?: string;
-  category?: string;
-  image?: File;
+  tags?: Partial<Tag>[];
+  image?: string;
 }): Promise<boolean> {
-  const { id, image, ...rest } = newStudy;
+  const { id, tags, ...rest } = newStudy;
 
+  if (tags) {
+    console.log(tags, rest);
+    await supabase.from("study_tags").delete().eq("study_id", id);
+    await supabase.from("study_tags").insert(
+      tags.map((tag) => ({
+        study_id: id,
+        tag_id: tag.id,
+      }))
+    );
+  }
   if (rest) {
     const { error } = await supabase.from("study").update(rest).eq("id", id);
     if (error) {
       console.error(error);
-      return false;
-    }
-  }
-
-  if (image) {
-    const { data: imgUrl, error: imgError } = await addImageToStorage(
-      "study",
-      image,
-      `${id}/image.png`
-    );
-    if (imgError || !imgUrl) {
-      return false;
-    }
-    const { error } = await supabase
-      .from("study")
-      .update({ image: imgUrl })
-      .eq("id", id);
-    if (error) {
       return false;
     }
   }

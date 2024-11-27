@@ -12,7 +12,7 @@ import {
   TableBody,
   TableCell,
 } from "@/components/shadcn/table";
-import { SearchBar } from "@/components/SearchBar";
+import { SearchBar } from "@/components/search-bar";
 
 export default function UserTable({ users }: { users: Profile["Row"][] }) {
   const [searchTerm, setSearchTerm] = useState("");

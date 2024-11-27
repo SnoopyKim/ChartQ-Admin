@@ -11,6 +11,7 @@ import {
   ImagePlus,
   Trash2,
   ArrowLeft,
+  Tag,
 } from "lucide-react";
 
 const icons = {
@@ -25,6 +26,7 @@ const icons = {
   "image-plus": ImagePlus,
   trash: Trash2,
   "arrow-left": ArrowLeft,
+  tag: Tag,
 };
 
 export type IconType = keyof typeof icons;

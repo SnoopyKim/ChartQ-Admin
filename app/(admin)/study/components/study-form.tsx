@@ -3,11 +3,12 @@
 import { Button } from "@/components/shadcn/button";
 import { Input } from "@/components/shadcn/input";
 import ImageUploader from "@/components/ui/image-uploader";
-import { addStudy, updateStudy } from "@/services/study";
 import Study from "@/types/study";
 import { Label } from "@/components/shadcn/label";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Tag from "@/types/tag";
+import { getTagList } from "@/services/tag";
+import { Badge } from "@/components/shadcn/badge";
 
 export default function StudyForm({
   defaultValue,
@@ -16,21 +17,34 @@ export default function StudyForm({
   defaultValue?: Study["Update"];
   onSubmit: (data: {
     title: string;
-    category: string;
+    tags: Partial<Tag>[];
     image?: File;
   }) => Promise<void>;
 }) {
+  const [tagList, setTagList] = useState<Tag[]>([]);
+  const [selectedTags, setSelectedTags] = useState<Partial<Tag>[]>([]);
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
+
+  useEffect(() => {
+    getTagList().then((res) => {
+      if (res.error || !res.data) return;
+      setTagList(res.data);
+    });
+  }, []);
+
+  useEffect(() => {
+    setSelectedTags(defaultValue?.tags ?? []);
+  }, [defaultValue]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); // 폼의 기본 제출 동작 방지
 
     const formData = new FormData(e.target as HTMLFormElement);
     const title = formData.get("title") as string;
-    const category = formData.get("category") as string;
 
     await onSubmit({
       title,
-      category,
+      tags: selectedTags,
       image: uploadedImage ?? undefined,
     });
   };
@@ -48,15 +62,33 @@ export default function StudyForm({
             className="mt-2 mb-4"
             required
           />
-          <Label htmlFor="category">카테고리</Label>
-          <Input
-            id="category"
-            name="category"
-            defaultValue={defaultValue?.category}
-            placeholder="카테고리를 입력해주세요"
-            className="mt-2"
-            required
-          />
+          <Label>
+            태그{" "}
+            <span className="text-sm text-primary">
+              ({selectedTags.length}개)
+            </span>
+          </Label>
+          <div className="flex gap-2 flex-wrap mt-2">
+            {tagList.map((tag) => (
+              <Badge
+                key={tag.id}
+                variant={
+                  selectedTags.find((t) => t.id === tag.id)
+                    ? "default"
+                    : "outline"
+                }
+                onClick={() => {
+                  setSelectedTags((prev) =>
+                    prev.includes(tag)
+                      ? prev.filter((t) => t.id !== tag.id)
+                      : [...prev, tag]
+                  );
+                }}
+              >
+                {tag.name}
+              </Badge>
+            ))}
+          </div>
         </div>
         <ImageUploader
           labelText="대표 이미지"

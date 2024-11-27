@@ -2,40 +2,52 @@
 
 import Study from "@/types/study";
 import { useEffect, useState } from "react";
-import { addStudy, getStudyList } from "@/services/study";
+import {
+  addStudy,
+  getStudiesByTag,
+  getStudiesWithNoTags,
+} from "@/services/study";
 import Link from "next/link";
 import Icon from "@/components/ui/icon";
 import { Tabs, TabsList, TabsTrigger } from "@/components/shadcn/tabs";
 import { Input } from "@/components/shadcn/input";
-import { SearchBar } from "@/components/SearchBar";
+import { SearchBar } from "@/components/search-bar";
 import { StudyCard } from "./components/study-card";
+import Tag from "@/types/tag";
+import { getTagList } from "@/services/tag";
+import { Badge } from "@/components/shadcn/badge";
 
 export default function StudyListPage() {
+  const [tagList, setTagList] = useState<Tag[]>([]);
+  const [selectedTag, setSelectedTag] = useState("");
   const [studyList, setStudyList] = useState<Study["Row"][]>([]);
-  const [selectedCategory, setSelectedCategory] = useState("tech");
 
   useEffect(() => {
-    const fetchStudyList = async () => {
-      const { data, error } = await getStudyList(selectedCategory);
-      if (error || !data) return;
-      setStudyList(data);
+    const fetchData = async () => {
+      getTagList().then((res) => {
+        if (res.error) return;
+        setTagList(res.data!);
+      });
     };
-    fetchStudyList();
-  }, [selectedCategory]);
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (selectedTag) {
+      getStudiesByTag(selectedTag).then((res) => {
+        setStudyList(res.data!);
+      });
+    } else {
+      getStudiesWithNoTags().then((res) => {
+        setStudyList(res.data!);
+      });
+    }
+  }, [selectedTag]);
 
   return (
     <div className="container">
       <div className="flex justify-between items-center">
-        <div className="flex gap-4 items-center">
-          <h2>차트자료 관리</h2>
-          <Tabs defaultValue="tech" onValueChange={setSelectedCategory}>
-            <TabsList>
-              <TabsTrigger value="tech">기술</TabsTrigger>
-              <TabsTrigger value="life">일상</TabsTrigger>
-              <TabsTrigger value="travel">여행</TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
+        <h2>차트자료 관리</h2>
         <Link
           href={"/study/new"}
           className="flex gap-2 items-center pl-3 pr-4 py-2 rounded bg-slate-700 text-white hover:bg-slate-900 hover:no-underline text-sm"
@@ -44,7 +56,26 @@ export default function StudyListPage() {
           차트자료 추가
         </Link>
       </div>
-      <div className="container mt-4">
+      <div className="flex gap-2 flex-wrap my-2">
+        <Badge
+          variant={selectedTag === "" ? "default" : "outline"}
+          onClick={() => setSelectedTag("")}
+        >
+          태그 없음
+        </Badge>
+        {tagList.map((tag) => (
+          <Badge
+            key={tag.id}
+            variant={selectedTag === tag.id ? "default" : "outline"}
+            onClick={() =>
+              setSelectedTag((prev) => (prev === tag.id ? "" : tag.id))
+            }
+          >
+            {tag.name}
+          </Badge>
+        ))}
+      </div>
+      <div className="container">
         <SearchBar
           onSearch={(res) => {
             console.log(res);
