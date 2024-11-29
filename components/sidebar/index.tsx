@@ -2,6 +2,7 @@ import Link from "next/link";
 import SignOutButton from "../ui/button/sign-out";
 import { ChartColumn } from "lucide-react";
 import NavItem from "./item";
+import { TextColorOption } from "../editor/bubble-menu/color-option";
 
 export default function Sidebar() {
   return (
@@ -14,6 +15,7 @@ export default function Sidebar() {
         <NavItem href="/users" icon={"users"} title="사용자 관리" />
         <NavItem href="/study" icon={"library"} title="차트자료 관리" />
         <NavItem href="/tag" icon={"tag"} title="태그 관리" />
+        <TextColorOption currentColor="#000" />
       </div>
       <div className="">
         <SignOutButton />

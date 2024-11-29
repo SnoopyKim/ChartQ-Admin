@@ -8,7 +8,7 @@ import {
   updateStudyContent,
 } from "@/services/study";
 import StudyForm from "../components/study-form";
-import Editor from "@/components/editor";
+import PostEditor from "@/components/editor";
 import Link from "next/link";
 import Icon from "@/components/ui/icon";
 import { toast } from "@/hooks/use-toast";
@@ -207,7 +207,7 @@ export default function StudyEditPage({
       </div>
       <div>
         {searchParams.step === "content" ? (
-          <Editor content={content || ""} onChange={setContent} />
+          <PostEditor content={content || ""} onChange={setContent} />
         ) : (
           <StudyForm defaultValue={study} onSubmit={handleUpdateStudy} />
         )}
