@@ -15,7 +15,6 @@ export default function Sidebar() {
         <NavItem href="/users" icon={"users"} title="사용자 관리" />
         <NavItem href="/study" icon={"library"} title="차트자료 관리" />
         <NavItem href="/tag" icon={"tag"} title="태그 관리" />
-        <TextColorOption currentColor="#000" />
       </div>
       <div className="">
         <SignOutButton />

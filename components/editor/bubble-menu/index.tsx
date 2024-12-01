@@ -1,5 +1,12 @@
 import { BubbleMenu, useCurrentEditor } from "@tiptap/react";
-import { Bold, Italic, Underline } from "lucide-react";
+import {
+  AlignCenter,
+  AlignLeft,
+  AlignRight,
+  Bold,
+  Italic,
+  Underline,
+} from "lucide-react";
 import { useCallback } from "react";
 import BubbleOption from "./option";
 import ImageOption from "./image";
@@ -16,9 +23,9 @@ export default function BubbleMenuBox() {
   return (
     <BubbleMenu
       editor={editor}
-      // tippyOptions={{
-      //   hideOnClick: "toggle",
-      // }}
+      tippyOptions={{
+        maxWidth: "none",
+      }}
     >
       <div className="flex items-center gap-1.5 bg-white shadow rounded p-1.5">
         {editor.getAttributes("image").src ? (
@@ -36,6 +43,7 @@ export default function BubbleMenuBox() {
           </>
         ) : (
           <>
+            {/* 텍스트 스타일 */}
             <BubbleOption
               onClick={() => editor.chain().focus().toggleBold().run()}
               isActive={editor?.isActive("bold")}
@@ -57,8 +65,27 @@ export default function BubbleMenuBox() {
             >
               <Underline className="w-5 h-5" />
             </BubbleOption>
-
             <div className="w-0.5 h-6 mx-1 bg-slate-200"></div>
+            {/* 텍스트 정렬 */}
+            <BubbleOption
+              onClick={() => editor.chain().focus().setTextAlign("left").run()}
+            >
+              <AlignLeft className="w-5 h-5" />
+            </BubbleOption>
+            <BubbleOption
+              onClick={() =>
+                editor.chain().focus().setTextAlign("center").run()
+              }
+            >
+              <AlignCenter className="w-5 h-5" />
+            </BubbleOption>
+            <BubbleOption
+              onClick={() => editor.chain().focus().setTextAlign("right").run()}
+            >
+              <AlignRight className="w-5 h-5" />
+            </BubbleOption>
+            <div className="w-0.5 h-6 mx-1 bg-slate-200"></div>
+            {/* 텍스트 색상 */}
             <TextColorOption
               currentColor={editor.getAttributes("textStyle").color}
               onSelect={(color) => {
@@ -79,7 +106,9 @@ export default function BubbleMenuBox() {
                 }
               }}
             />
+
             <div className="w-0.5 h-6 mx-1 bg-slate-200"></div>
+            {/* 링크 */}
             <LinkOption
               defaultValue={editor?.getAttributes("link").href}
               onSetLink={(link) => {

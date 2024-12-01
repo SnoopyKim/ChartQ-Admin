@@ -2,20 +2,14 @@
 
 import Study from "@/types/study";
 import { useEffect, useState } from "react";
-import {
-  addStudy,
-  getStudiesByTag,
-  getStudiesWithNoTags,
-} from "@/services/study";
+import { getStudiesByTag, getStudiesWithNoTags } from "@/services/study";
 import Link from "next/link";
-import Icon from "@/components/ui/icon";
-import { Tabs, TabsList, TabsTrigger } from "@/components/shadcn/tabs";
-import { Input } from "@/components/shadcn/input";
 import { SearchBar } from "@/components/search-bar";
 import { StudyCard } from "./components/study-card";
 import Tag from "@/types/tag";
 import { getTagList } from "@/services/tag";
 import { Badge } from "@/components/shadcn/badge";
+import Icon from "@/components/ui/icon";
 
 export default function StudyListPage() {
   const [tagList, setTagList] = useState<Tag[]>([]);

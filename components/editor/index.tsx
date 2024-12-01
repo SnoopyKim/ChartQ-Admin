@@ -37,7 +37,7 @@ const PostEditor = ({
       autofocus="end"
       editorProps={{
         attributes: {
-          class: "focus:outline-none border-t border-gray-300 pt-4",
+          class: "focus:outline-none border-t border-gray-300 pt-4 min-h-96",
         },
       }}
     >
@@ -68,5 +68,7 @@ const extensions = [
   TextStyle,
   Link,
   Highlight.configure({ multicolor: true }),
-  TextAlign,
+  TextAlign.configure({
+    types: ["heading", "paragraph"],
+  }),
 ];

@@ -1,7 +1,5 @@
 "use client";
 
-import { Highlighter, Palette } from "lucide-react";
-
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -11,6 +9,7 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
 } from "@/components/shadcn/dropdown-menu";
+import Icon from "@/components/ui/icon";
 import { useState } from "react";
 
 const colors = [
@@ -140,7 +139,8 @@ export const TextColorOption = ({
       className="p-2 hover:bg-slate-50 rounded relative"
       onClick={() => setIsOpen(!isOpen)}
     >
-      <Palette
+      <Icon
+        name="palette"
         className={`w-5 h-5 ${
           colors.find((c) => c.text.color === currentColor)?.text.style
         }`}
@@ -183,7 +183,8 @@ export const HighlightOption = ({
       className="p-2 hover:bg-slate-50 rounded relative"
       onClick={() => setIsOpen(!isOpen)}
     >
-      <Highlighter
+      <Icon
+        name="highlighter"
         className={`w-5 h-5 ${
           colors.find((c) => c.highlight.color === currentColor)?.highlight
             .style

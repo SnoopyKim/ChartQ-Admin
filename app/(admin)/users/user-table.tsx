@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Profile from "@/types/user-profile";
-import Icon from "@/components/ui/icon";
 import { Button } from "@/components/shadcn/button";
 import {
   Table,
@@ -13,6 +12,7 @@ import {
   TableCell,
 } from "@/components/shadcn/table";
 import { SearchBar } from "@/components/search-bar";
+import Icon from "@/components/ui/icon";
 
 export default function UserTable({ users }: { users: Profile["Row"][] }) {
   const [searchTerm, setSearchTerm] = useState("");

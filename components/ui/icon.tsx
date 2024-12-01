@@ -12,6 +12,10 @@ import {
   Trash2,
   ArrowLeft,
   Tag,
+  X,
+  Link,
+  Palette,
+  Highlighter,
 } from "lucide-react";
 
 const icons = {
@@ -27,6 +31,10 @@ const icons = {
   trash: Trash2,
   "arrow-left": ArrowLeft,
   tag: Tag,
+  close: X,
+  link: Link,
+  palette: Palette,
+  highlighter: Highlighter,
 };
 
 export type IconType = keyof typeof icons;
@@ -34,11 +42,13 @@ export type IconType = keyof typeof icons;
 export default function Icon({
   name,
   className,
+  onClick,
 }: {
   name: IconType;
   className?: string;
+  onClick?: () => void;
 }) {
   const IconData = icons[name];
 
-  return <IconData className={cn("w-5 h-5", className)} />;
+  return <IconData className={cn("w-5 h-5", className)} onClick={onClick} />;
 }

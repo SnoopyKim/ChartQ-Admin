@@ -1,4 +1,3 @@
-import { Link, X } from "lucide-react";
 import BubbleOption from "./option";
 import {
   Dialog,
@@ -11,6 +10,7 @@ import {
 import { Input } from "@/components/shadcn/input";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/shadcn/button";
+import Icon from "@/components/ui/icon";
 
 export const LinkOption = ({
   defaultValue,
@@ -29,7 +29,7 @@ export const LinkOption = ({
   return (
     <>
       <BubbleOption onClick={() => setOpen(true)} isActive={!!defaultValue}>
-        <Link className="w-5 h-5" />
+        <Icon name="link" className="w-5 h-5" />
       </BubbleOption>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
@@ -48,7 +48,7 @@ export const LinkOption = ({
               className="absolute right-2 top-1/2 -translate-y-1/2 h-6 w-6 p-0 text-red-500"
               onClick={() => setLink("")}
             >
-              <X className="h-4 w-4" />
+              <Icon name="close" className="h-4 w-4" />
             </Button>
           </div>
           <DialogFooter>

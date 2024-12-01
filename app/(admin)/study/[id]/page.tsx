@@ -10,15 +10,14 @@ import {
 import StudyForm from "../components/study-form";
 import PostEditor from "@/components/editor";
 import Link from "next/link";
-import Icon from "@/components/ui/icon";
 import { toast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
 import Study from "@/types/study";
 import { Button } from "@/components/shadcn/button";
 import Tag from "@/types/tag";
-import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useDialog } from "@/hooks/use-dialog";
+import Icon from "@/components/ui/icon";
 
 export default function StudyEditPage({
   params,
@@ -200,7 +199,8 @@ export default function StudyEditPage({
       </div>
       <div className="flex gap-2 items-center">
         <h1 className="my-4">차트자료 편집</h1>
-        <Trash2
+        <Icon
+          name="trash"
           className="w-10 h-10 text-error cursor-pointer p-2 hover:bg-error/10 rounded-md"
           onClick={handleDeleteStudy}
         />

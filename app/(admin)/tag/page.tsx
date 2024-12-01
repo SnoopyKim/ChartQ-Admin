@@ -14,11 +14,11 @@ import {
 } from "@/components/shadcn/dialog";
 import { Input } from "@/components/shadcn/input";
 import { Label } from "@/components/shadcn/label";
+import Icon from "@/components/ui/icon";
 import { useDialog } from "@/hooks/use-dialog";
 import { toast } from "@/hooks/use-toast";
 import { addTag, deleteTag, getTagList } from "@/services/tag";
 import Tag from "@/types/tag";
-import { Plus, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function TagPage() {
@@ -78,7 +78,8 @@ export default function TagPage() {
             className="flex gap-1 items-center text-base"
           >
             <span>{tag.name}</span>
-            <X
+            <Icon
+              name="close"
               className="w-4 h-4 text-red-500 cursor-pointer"
               onClick={() => handleDeleteTag(tag.id)}
             />
@@ -119,7 +120,7 @@ const NewTagDialog = ({ onAdd }: { onAdd: (newTag: Tag) => void }) => {
         className="flex gap-1 items-center text-base cursor-pointer"
         onClick={() => setOpen(true)}
       >
-        <Plus className="w-5 h-5" /> <span>태그 추가</span>
+        <Icon name="plus" className="w-5 h-5" /> <span>태그 추가</span>
       </Badge>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-[425px]">
