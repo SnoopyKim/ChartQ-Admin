@@ -1,17 +1,9 @@
 import { BubbleMenu, useCurrentEditor } from "@tiptap/react";
-import {
-  AlignCenter,
-  AlignLeft,
-  AlignRight,
-  Bold,
-  Italic,
-  Underline,
-} from "lucide-react";
-import { useCallback } from "react";
 import BubbleOption from "./option";
 import ImageOption from "./image";
 import { TextColorOption, HighlightOption } from "./color-option";
 import { LinkOption } from "./link-option";
+import Icon from "@/components/ui/icon";
 
 export default function BubbleMenuBox() {
   const { editor } = useCurrentEditor();
@@ -27,7 +19,7 @@ export default function BubbleMenuBox() {
         maxWidth: "none",
       }}
     >
-      <div className="flex items-center gap-1.5 bg-white shadow rounded p-1.5">
+      <div className="flex items-center gap-1.5 bg-white shadow rounded p-1.5 border border-slate-200">
         {editor.getAttributes("image").src ? (
           <>
             <ImageOption
@@ -38,7 +30,7 @@ export default function BubbleMenuBox() {
             <BubbleOption
               onClick={() => editor.chain().focus().deleteSelection().run()}
             >
-              삭제
+              <Icon name="trash" className="w-5 h-5" />
             </BubbleOption>
           </>
         ) : (
@@ -49,40 +41,43 @@ export default function BubbleMenuBox() {
               isActive={editor?.isActive("bold")}
               className={"font-bold"}
             >
-              <Bold className="w-5 h-5" />
+              <Icon name="bold" className="w-5 h-5" />
             </BubbleOption>
             <BubbleOption
               onClick={() => editor.chain().focus().toggleItalic().run()}
               isActive={editor?.isActive("italic")}
               className={"italic"}
             >
-              <Italic className="w-5 h-5" />
+              <Icon name="italic" className="w-5 h-5" />
             </BubbleOption>
             <BubbleOption
               onClick={() => editor.chain().focus().toggleUnderline().run()}
               isActive={editor?.isActive("underline")}
               className={"underline underline-offset-2"}
             >
-              <Underline className="w-5 h-5" />
+              <Icon name="underline" className="w-5 h-5" />
             </BubbleOption>
             <div className="w-0.5 h-6 mx-1 bg-slate-200"></div>
             {/* 텍스트 정렬 */}
             <BubbleOption
               onClick={() => editor.chain().focus().setTextAlign("left").run()}
+              isActive={editor.isActive("textAlign", { align: "left" })}
             >
-              <AlignLeft className="w-5 h-5" />
+              <Icon name="align-left" className="w-5 h-5" />
             </BubbleOption>
             <BubbleOption
               onClick={() =>
                 editor.chain().focus().setTextAlign("center").run()
               }
+              isActive={editor.isActive("textAlign", { align: "center" })}
             >
-              <AlignCenter className="w-5 h-5" />
+              <Icon name="align-center" className="w-5 h-5" />
             </BubbleOption>
             <BubbleOption
               onClick={() => editor.chain().focus().setTextAlign("right").run()}
+              isActive={editor.isActive("textAlign", { align: "right" })}
             >
-              <AlignRight className="w-5 h-5" />
+              <Icon name="align-right" className="w-5 h-5" />
             </BubbleOption>
             <div className="w-0.5 h-6 mx-1 bg-slate-200"></div>
             {/* 텍스트 색상 */}

@@ -16,6 +16,19 @@ import {
   Link,
   Palette,
   Highlighter,
+  Image,
+  Heading1,
+  Heading2,
+  Heading3,
+  List,
+  ListOrdered,
+  AlignCenter,
+  AlignLeft,
+  AlignRight,
+  Bold,
+  Italic,
+  Underline,
+  Replace,
 } from "lucide-react";
 
 const icons = {
@@ -35,6 +48,19 @@ const icons = {
   link: Link,
   palette: Palette,
   highlighter: Highlighter,
+  list: List,
+  "list-ordered": ListOrdered,
+  image: Image,
+  heading1: Heading1,
+  heading2: Heading2,
+  heading3: Heading3,
+  "align-center": AlignCenter,
+  "align-left": AlignLeft,
+  "align-right": AlignRight,
+  bold: Bold,
+  italic: Italic,
+  underline: Underline,
+  replace: Replace,
 };
 
 export type IconType = keyof typeof icons;

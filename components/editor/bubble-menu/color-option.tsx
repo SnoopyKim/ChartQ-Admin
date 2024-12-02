@@ -134,38 +134,38 @@ export const TextColorOption = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <button
-      type="button"
-      className="p-2 hover:bg-slate-50 rounded relative"
-      onClick={() => setIsOpen(!isOpen)}
-    >
-      <Icon
-        name="palette"
-        className={`w-5 h-5 ${
-          colors.find((c) => c.text.color === currentColor)?.text.style
-        }`}
-      />
-      <DropdownMenu modal={false} open={isOpen} onOpenChange={setIsOpen}>
-        <DropdownMenuTrigger className="absolute bottom-0 left-0 w-0 h-0"></DropdownMenuTrigger>
-        <DropdownMenuContent side="bottom" sideOffset={10} align="start">
-          <DropdownMenuLabel>글자색</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            {colors.map((color) => (
-              <DropdownMenuItem
-                key={color.label}
-                className={`${color.text.style}`}
-                onSelect={() =>
-                  onSelect(color.label === "기본" ? "" : color.text.color)
-                }
-              >
-                {color.label}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </button>
+    <DropdownMenu modal={false} open={isOpen} onOpenChange={setIsOpen}>
+      <button
+        type="button"
+        className="p-2 hover:bg-slate-50 rounded"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <Icon
+          name="palette"
+          className={`w-5 h-5 ${
+            colors.find((c) => c.text.color === currentColor)?.text.style
+          }`}
+        />
+      </button>
+      <DropdownMenuTrigger className="absolute bottom-0 right-[8.5rem] w-0 h-0"></DropdownMenuTrigger>
+      <DropdownMenuContent side="bottom" sideOffset={10} align="start">
+        <DropdownMenuLabel>글자색</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          {colors.map((color) => (
+            <DropdownMenuItem
+              key={color.label}
+              className={`${color.text.style}`}
+              onSelect={() =>
+                onSelect(color.label === "기본" ? "" : color.text.color)
+              }
+            >
+              {color.label}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 
@@ -178,41 +178,40 @@ export const HighlightOption = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <button
-      type="button"
-      className="p-2 hover:bg-slate-50 rounded relative"
-      onClick={() => setIsOpen(!isOpen)}
-    >
-      <Icon
-        name="highlighter"
-        className={`w-5 h-5 ${
-          colors.find((c) => c.highlight.color === currentColor)?.highlight
-            .style
-        }`}
-      />
-      <DropdownMenu modal={false} open={isOpen} onOpenChange={setIsOpen}>
-        <DropdownMenuTrigger className="absolute bottom-0 left-0 w-0 h-0"></DropdownMenuTrigger>
-        <DropdownMenuContent side="bottom" sideOffset={10} align="start">
-          <DropdownMenuLabel>배경색</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            {colors.map((color) => (
-              <DropdownMenuItem
-                key={color.label}
-                onSelect={() =>
-                  onSelect(color.label === "기본" ? "" : color.highlight.color)
-                }
+    <DropdownMenu modal={false} open={isOpen} onOpenChange={setIsOpen}>
+      <button
+        type="button"
+        className="p-2 hover:bg-slate-50 rounded"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <Icon
+          name="highlighter"
+          className={`w-5 h-5 ${
+            colors.find((c) => c.highlight.color === currentColor)?.text.style
+          }`}
+        />
+      </button>
+      <DropdownMenuTrigger className="absolute bottom-0 right-[5.75rem] w-0 h-0"></DropdownMenuTrigger>
+      <DropdownMenuContent side="bottom" sideOffset={10} align="start">
+        <DropdownMenuLabel>배경색</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          {colors.map((color) => (
+            <DropdownMenuItem
+              key={color.label}
+              onSelect={() =>
+                onSelect(color.label === "기본" ? "" : color.highlight.color)
+              }
+            >
+              <span
+                className={`${color.text.style} ${color.highlight.style} px-2`}
               >
-                <span
-                  className={`${color.text.style} ${color.highlight.style} px-2`}
-                >
-                  {color.label}
-                </span>
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </button>
+                {color.label}
+              </span>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };

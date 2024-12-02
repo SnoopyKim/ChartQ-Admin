@@ -18,6 +18,7 @@ import TextStyle from "@tiptap/extension-text-style";
 import Link from "@tiptap/extension-link";
 import Highlight from "@tiptap/extension-highlight";
 import TextAlign from "@tiptap/extension-text-align";
+import Dropcursor from "@tiptap/extension-dropcursor";
 import "./editor.css";
 import FloatingMenuBox from "./floating-menu";
 import BubbleMenuBox from "./bubble-menu";
@@ -33,6 +34,10 @@ const PostEditor = ({
     <EditorProvider
       extensions={extensions}
       content={content}
+      onUpdate={({ editor }) => {
+        onChange(editor.getHTML());
+      }}
+      // shouldRerenderOnTransaction={false}
       immediatelyRender={false}
       autofocus="end"
       editorProps={{
@@ -60,7 +65,9 @@ const extensions = [
   OrderedList,
   ListItem,
   HardBreak,
-  Image,
+  Image.configure({
+    allowBase64: true,
+  }),
   Bold,
   Italic,
   Underline,
@@ -71,4 +78,5 @@ const extensions = [
   TextAlign.configure({
     types: ["heading", "paragraph"],
   }),
+  Dropcursor,
 ];

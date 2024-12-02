@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import BubbleOption from "./option";
+import Icon from "@/components/ui/icon";
 
 const ImageOption = ({ onChange }: { onChange: (base64: string) => void }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -14,11 +15,12 @@ const ImageOption = ({ onChange }: { onChange: (base64: string) => void }) => {
       };
       reader.readAsDataURL(file);
     }
+    event.target.value = "";
   };
   return (
     <>
       <BubbleOption onClick={() => inputRef.current?.click()}>
-        변경
+        <Icon name="replace" className="w-5 h-5" />
       </BubbleOption>
       <input
         ref={inputRef}
