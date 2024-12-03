@@ -29,11 +29,11 @@ export default function StudyListPage() {
   useEffect(() => {
     if (selectedTag) {
       getStudiesByTag(selectedTag).then((res) => {
-        setStudyList(res.data!);
+        setStudyList(res.data ?? []);
       });
     } else {
       getStudiesWithNoTags().then((res) => {
-        setStudyList(res.data!);
+        setStudyList(res.data ?? []);
       });
     }
   }, [selectedTag]);

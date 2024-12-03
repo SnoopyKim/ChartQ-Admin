@@ -20,13 +20,15 @@ export async function getStudiesByTag(tagId: string): Promise<{
   }
 
   // 응답 데이터 구조 정리
-  const formattedData = data?.map((d: { study: any }) => ({
-    id: d.study.id,
-    title: d.study.title,
-    image: d.study.image,
-    tags: d.study.study_tags.map((st: any) => st.tag) as Tag[],
-    updated_at: d.study.updated_at,
-  }));
+  const formattedData = data
+    ?.map((d: { study: any }) => ({
+      id: d.study.id,
+      title: d.study.title,
+      image: d.study.image,
+      tags: d.study.study_tags.map((st: any) => st.tag) as Tag[],
+      updated_at: d.study.updated_at,
+    }))
+    .reverse();
 
   return { data: formattedData as Study["Row"][] };
 }
@@ -43,7 +45,8 @@ export async function getStudiesWithNoTags(): Promise<{
       study_tags!left (tag (id, name))
     `
     )
-    .is("study_tags", null); // study_tags가 없는 경우만 가져옴
+    .is("study_tags", null) // study_tags가 없는 경우만 가져옴
+    .order("updated_at", { ascending: false });
 
   if (error) {
     console.error(error);
@@ -65,11 +68,14 @@ export async function getStudies(): Promise<{
   data?: Study["Row"][];
   error?: PostgrestError;
 }> {
-  const { data, error } = await supabase.from("study").select(
-    `id, title, image, updated_at,
+  const { data, error } = await supabase
+    .from("study")
+    .select(
+      `id, title, image, updated_at,
       study_tags!left (tag (id, name))
     `
-  );
+    )
+    .order("updated_at", { ascending: false });
 
   if (error) {
     console.error(error);

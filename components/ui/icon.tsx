@@ -29,6 +29,8 @@ import {
   Italic,
   Underline,
   Replace,
+  Puzzle,
+  LoaderCircle,
 } from "lucide-react";
 
 const icons = {
@@ -61,6 +63,8 @@ const icons = {
   italic: Italic,
   underline: Underline,
   replace: Replace,
+  puzzle: Puzzle,
+  loading: LoaderCircle,
 };
 
 export type IconType = keyof typeof icons;
