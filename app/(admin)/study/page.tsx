@@ -15,6 +15,7 @@ export default function StudyListPage() {
   const [tagList, setTagList] = useState<Tag[]>([]);
   const [selectedTag, setSelectedTag] = useState("");
   const [studyList, setStudyList] = useState<Study["Row"][]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,6 +38,16 @@ export default function StudyListPage() {
       });
     }
   }, [selectedTag]);
+
+  const sortedAndFilteredStudyList = studyList
+    .filter((study) =>
+      study.title.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => {
+      return (
+        new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+      );
+    });
 
   return (
     <div className="container">
@@ -71,17 +82,15 @@ export default function StudyListPage() {
       </div>
       <div className="container">
         <SearchBar
-          onSearch={(res) => {
-            console.log(res);
+          onSearch={(value) => {
+            setSearchTerm(value);
           }}
-          placeholder="검색어를 입력하세요..."
-          table="study"
-          searchColumn="title"
+          placeholder="제목 검색"
         />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-6">
-        {studyList.map((study) => (
+        {sortedAndFilteredStudyList.map((study) => (
           <Link href={`/study/${study.id}`} key={study.id}>
             <StudyCard
               title={study.title}

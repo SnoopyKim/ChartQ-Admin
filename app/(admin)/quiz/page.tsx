@@ -21,6 +21,7 @@ export default function StudyListPage() {
   const [selectedType, setSelectedType] = useState("ox");
   const [quizList, setQuizList] = useState<Quiz[]>([]);
   const [fetching, setFetching] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     setFetching(true);
@@ -36,6 +37,16 @@ export default function StudyListPage() {
       });
     }
   }, [selectedType]);
+
+  const sortedAndFilteredQuizList = quizList
+    .filter((quiz) =>
+      quiz.content.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => {
+      return (
+        new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+      );
+    });
 
   return (
     <div className="container">
@@ -70,12 +81,10 @@ export default function StudyListPage() {
       </div>
       <div className="container">
         <SearchBar
-          onSearch={(res) => {
-            console.log(res);
+          onSearch={(value) => {
+            setSearchTerm(value);
           }}
-          placeholder="검색어를 입력하세요..."
-          table="study"
-          searchColumn="title"
+          placeholder="제목 검색"
         />
       </div>
 
@@ -86,7 +95,7 @@ export default function StudyListPage() {
             className="w-10 h-10 animate-spin text-slate-600 "
           />
         ) : (
-          quizList.map((quiz) => (
+          sortedAndFilteredQuizList.map((quiz) => (
             <Link href={`/quiz/${quiz.id}/${selectedType}`} key={quiz.id}>
               <QuizCard
                 title={quiz.content}

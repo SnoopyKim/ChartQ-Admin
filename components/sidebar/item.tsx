@@ -15,7 +15,7 @@ export default function NavItem({
   icon: IconType;
 }) {
   const pathname = usePathname();
-  const isActive = pathname === href;
+  const isActive = pathname.startsWith(href);
 
   return (
     <Link
@@ -23,7 +23,7 @@ export default function NavItem({
       className={cn(
         "flex gap-2 items-center p-2 rounded hover:no-underline",
         isActive
-          ? "text-foreground bg-secondary/50"
+          ? "text-secondary-foreground bg-secondary/50"
           : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
       )}
     >

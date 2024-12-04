@@ -46,12 +46,10 @@ export default function UserTable({ users }: { users: Profile["Row"][] }) {
   return (
     <>
       <SearchBar
-        onSearch={(res) => {
-          console.log(res);
+        onSearch={(value) => {
+          setSearchTerm(value);
         }}
-        placeholder="검색어를 입력하세요..."
-        table="profiles"
-        searchColumn="email"
+        placeholder="이름, 이메일, 유형 검색"
       />
       <div className="relative w-full rounded-md border mt-4 overflow-auto">
         <Table>

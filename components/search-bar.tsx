@@ -1,56 +1,35 @@
 "use client";
 
-import { useState } from "react";
+import { useRef } from "react";
 import { Input } from "@/components/shadcn/input";
-import { createClient } from "@/utils/supabase/client";
 
 interface SearchBarProps {
-  onSearch: (results: any[]) => void;
+  onSearch: (value: string) => void;
   placeholder?: string;
-  table: string; // 검색할 테이블 이름
-  searchColumn: string; // 검색할 컬럼 이름
 }
 
 export function SearchBar({
   onSearch,
   placeholder = "검색어를 입력하세요...",
-  table,
-  searchColumn,
 }: SearchBarProps) {
-  const [searchTerm, setSearchTerm] = useState("");
-  const supabase = createClient();
+  const timer = useRef<NodeJS.Timeout | null>(null);
 
-  const handleSearch = async (value: string) => {
-    setSearchTerm(value);
-
-    if (value.length < 2) {
-      onSearch([]);
-      return;
+  const handleSearch = (value: string) => {
+    if (timer.current) {
+      clearTimeout(timer.current);
     }
 
-    try {
-      const { data, error } = await supabase
-        .from(table)
-        .select()
-        .ilike(searchColumn, `%${value}%`)
-        .limit(10);
-
-      if (error) throw error;
-
-      onSearch(data || []);
-    } catch (error) {
-      console.error("검색 중 오류 발생:", error);
-      onSearch([]);
-    }
+    timer.current = setTimeout(() => {
+      onSearch(value);
+    }, 300);
   };
 
   return (
-    <div className="relative w-full max-w-xl">
+    <div className="relative w-full max-w-lg">
       <div className="relative">
         <Input
           type="search"
           placeholder={placeholder}
-          value={searchTerm}
           onChange={(e) => handleSearch(e.target.value)}
           className="w-full pl-10"
         />
