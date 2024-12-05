@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Icon from "./icon";
 import { Label } from "../shadcn/label";
 import Image from "next/image";
+import { toast } from "@/hooks/use-toast";
 
 interface ImageUploaderProps {
   labelText?: string;
@@ -27,6 +28,14 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (!["image/png", "image/jpeg", "image/gif"].includes(file.type)) {
+        toast({
+          variant: "error",
+          title: file.type + "형식은 업로드할 수 없습니다.",
+        });
+        e.target.value = "";
+        return;
+      }
       const newPreviewUrl = URL.createObjectURL(file);
       setPreview(newPreviewUrl);
       onFileSelect(file);
@@ -43,7 +52,10 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
 
   return (
     <div className="w-full">
-      <Label>{labelText}</Label>
+      <Label>
+        {labelText}
+        <span className="ml-2 text-xs text-gray-500">png, jpeg, gif</span>
+      </Label>
       <div
         className={`relative mt-2 border-dashed border-2 ${
           preview ? "border-transparent p-0" : "border-gray-400 p-4"

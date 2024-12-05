@@ -2,6 +2,7 @@ import { cn } from "@/utils/cn";
 import { FloatingMenu, useCurrentEditor } from "@tiptap/react";
 import { useRef } from "react";
 import Icon, { IconType } from "../ui/icon";
+import { toast } from "@/hooks/use-toast";
 
 export default function FloatingMenuBox() {
   const { editor } = useCurrentEditor();
@@ -10,6 +11,13 @@ export default function FloatingMenuBox() {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (editor && file) {
+      if (!["image/png", "image/jpeg", "image/gif"].includes(file.type)) {
+        toast({
+          variant: "error",
+          title: file.type + "형식은 업로드할 수 없습니다.",
+        });
+        return;
+      }
       const reader = new FileReader();
       reader.onload = () => {
         const base64 = reader.result as string;
