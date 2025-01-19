@@ -11,8 +11,11 @@ export async function getStudiesByTag(tagId: string): Promise<{
 }> {
   const { data, error } = await supabase
     .from("study_tags")
-    .select("study(id, title, image, updated_at, study_tags(tag(*)))") // studies 테이블의 데이터를 가져옴
-    .eq("tag_id", tagId);
+    .select(
+      "study(id, title, subtitle, order, image, updated_at, study_tags(tag(*)))"
+    ) // studies 테이블의 데이터를 가져옴
+    .eq("tag_id", tagId)
+    .order("order", { foreignTable: "study", ascending: true });
 
   if (error) {
     console.error(error);
@@ -41,12 +44,12 @@ export async function getStudiesWithNoTags(): Promise<{
   const { data, error } = await supabase
     .from("study")
     .select(
-      `id, title, image, updated_at,
+      `id, title, subtitle, order, image, updated_at,
       study_tags!left (tag (id, name))
     `
     )
     .is("study_tags", null) // study_tags가 없는 경우만 가져옴
-    .order("updated_at", { ascending: false });
+    .order("order", { ascending: true });
 
   if (error) {
     console.error(error);
@@ -56,9 +59,7 @@ export async function getStudiesWithNoTags(): Promise<{
   // study_tags를 tags로 변환하고 null을 빈 배열로 변경
   const result = data.map((study) => ({
     ...study,
-    tags: study.study_tags
-      ? (study.study_tags.map((st: any) => st.tags) as Tag[])
-      : [],
+    tags: [],
   }));
 
   return { data: result as Study["Row"][] };
@@ -71,11 +72,11 @@ export async function getStudies(): Promise<{
   const { data, error } = await supabase
     .from("study")
     .select(
-      `id, title, image, updated_at,
+      `id, title, subtitle, order, image, updated_at,
       study_tags!left (tag (id, name))
     `
     )
-    .order("updated_at", { ascending: false });
+    .order("order", { ascending: true });
 
   if (error) {
     console.error(error);
@@ -86,7 +87,7 @@ export async function getStudies(): Promise<{
   const result = data.map((study) => ({
     ...study,
     tags: study.study_tags
-      ? (study.study_tags.map((st: any) => st.tags) as Tag[])
+      ? study.study_tags.map((st: any) => st.tag as Tag)
       : [],
   }));
 
@@ -125,6 +126,7 @@ export async function getStudy(
 
 export async function addStudy(postData: {
   title: string;
+  subtitle?: string;
   tags: Partial<Tag>[];
   image?: File;
 }): Promise<{ data?: Study["Row"]; error?: PostgrestError }> {
@@ -168,13 +170,13 @@ export async function addStudy(postData: {
 export async function updateStudy(newStudy: {
   id: string;
   title?: string;
+  subtitle?: string;
   tags?: Partial<Tag>[];
   image?: string;
 }): Promise<boolean> {
   const { id, tags, ...rest } = newStudy;
 
   if (tags) {
-    console.log(tags, rest);
     await supabase.from("study_tags").delete().eq("study_id", id);
     await supabase.from("study_tags").insert(
       tags.map((tag) => ({
@@ -191,6 +193,18 @@ export async function updateStudy(newStudy: {
     }
   }
 
+  return true;
+}
+
+export async function updateStudyOrder(
+  id: string,
+  order: number
+): Promise<boolean> {
+  const { error } = await supabase.from("study").update({ order }).eq("id", id);
+  if (error) {
+    console.error(error);
+    return false;
+  }
   return true;
 }
 

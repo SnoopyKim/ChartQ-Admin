@@ -54,12 +54,14 @@ export default function StudyEditPage({
 
   const handleUpdateStudy = async (data: {
     title: string;
+    subtitle: string;
     tags: Partial<Tag>[];
     image?: File;
   }) => {
     const newStudy: any = {
       id: params.id,
       title: data.title,
+      subtitle: data.subtitle,
       tags: data.tags,
     };
 

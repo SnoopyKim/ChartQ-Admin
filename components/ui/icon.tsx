@@ -31,6 +31,8 @@ import {
   Replace,
   Puzzle,
   LoaderCircle,
+  ArrowUpDown,
+  HelpCircle,
 } from "lucide-react";
 
 const icons = {
@@ -65,6 +67,8 @@ const icons = {
   replace: Replace,
   puzzle: Puzzle,
   loading: LoaderCircle,
+  order: ArrowUpDown,
+  help: HelpCircle,
 };
 
 export type IconType = keyof typeof icons;

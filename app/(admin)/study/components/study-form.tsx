@@ -17,6 +17,7 @@ export default function StudyForm({
   defaultValue?: Study["Update"];
   onSubmit: (data: {
     title: string;
+    subtitle: string;
     tags: Partial<Tag>[];
     image?: File;
   }) => Promise<void>;
@@ -41,9 +42,11 @@ export default function StudyForm({
 
     const formData = new FormData(e.target as HTMLFormElement);
     const title = formData.get("title") as string;
+    const subtitle = formData.get("subtitle") as string;
 
     await onSubmit({
       title,
+      subtitle,
       tags: selectedTags,
       image: uploadedImage ?? undefined,
     });
@@ -61,6 +64,14 @@ export default function StudyForm({
             placeholder="제목을 입력해주세요"
             className="mt-2 mb-4"
             required
+          />
+          <Label htmlFor="subtitle">부제목</Label>
+          <Input
+            id="subtitle"
+            name="subtitle"
+            defaultValue={defaultValue?.subtitle}
+            placeholder="부제목을 입력해주세요"
+            className="mt-2 mb-4"
           />
           <Label>
             태그{" "}

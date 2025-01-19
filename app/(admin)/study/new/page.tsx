@@ -13,6 +13,7 @@ export default function NewStudyPage() {
 
   const handleAddStudy = async (data: {
     title: string;
+    subtitle: string;
     tags: Partial<Tag>[];
     image?: File;
   }) => {
