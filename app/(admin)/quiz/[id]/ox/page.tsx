@@ -41,12 +41,14 @@ export default function QuizOXEditPage({ params }: { params: { id: string } }) {
     answer: boolean;
     tags: Partial<Tag>[];
     image?: File;
+    explanation?: string;
   }) => {
     const newQuizOX: any = {
       id: params.id,
       content: data.content,
       answer: data.answer,
       tags: data.tags,
+      explanation: data.explanation,
     };
 
     if (data.image) {

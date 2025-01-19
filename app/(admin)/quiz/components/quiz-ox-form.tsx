@@ -3,7 +3,7 @@
 import { Button } from "@/components/shadcn/button";
 import { Input } from "@/components/shadcn/input";
 import ImageUploader from "@/components/ui/image-uploader";
-import { QuizOX, QuizChoice } from "@/types/quiz";
+import { QuizOX, QuizMC } from "@/types/quiz";
 import { Label } from "@/components/shadcn/label";
 import { useEffect, useState } from "react";
 import Tag from "@/types/tag";
@@ -22,6 +22,7 @@ export default function QuizOXForm({
     answer: boolean;
     tags: Partial<Tag>[];
     image?: File;
+    explanation?: string;
   }) => Promise<void>;
 }) {
   const [tagList, setTagList] = useState<Tag[]>([]);
@@ -47,6 +48,7 @@ export default function QuizOXForm({
 
     const formData = new FormData(e.target as HTMLFormElement);
     const content = formData.get("quiz-content") as string;
+    const explanation = formData.get("quiz-explanation") as string;
 
     setIsSaving(true);
     await onSubmit({
@@ -54,6 +56,7 @@ export default function QuizOXForm({
       answer,
       tags: selectedTags,
       image: uploadedImage ?? undefined,
+      explanation,
     });
     setIsSaving(false);
   };
@@ -98,7 +101,7 @@ export default function QuizOXForm({
               </Badge>
             ))}
           </div>
-          <div className="flex items-center gap-4 mt-4">
+          <div className="flex items-center gap-4 my-4">
             <Label htmlFor="quiz-answer">정답</Label>
             <Switch
               id="quiz-answer"
@@ -114,6 +117,14 @@ export default function QuizOXForm({
               <span className="text-lg font-bold text-error">X</span>
             )}
           </div>
+          <Label htmlFor="quiz-explanation">풀이</Label>
+          <Input
+            id="quiz-explanation"
+            name="quiz-explanation"
+            defaultValue={defaultValue?.explanation}
+            placeholder="풀이를 입력해주세요"
+            className="mt-2 mb-4"
+          />
         </div>
         <ImageUploader
           labelText="퀴즈 이미지"

@@ -2,7 +2,7 @@ import Tag from "@/types/tag";
 import { createClient } from "@/utils/supabase/client";
 import { PostgrestError } from "@supabase/supabase-js";
 import { addImageToStorage } from "./study";
-import { QuizOX, QuizChoice } from "@/types/quiz";
+import { QuizOX, QuizMC } from "@/types/quiz";
 
 const supabase = createClient();
 
@@ -69,6 +69,7 @@ export async function addQuizOX(postData: {
   answer: boolean;
   tags: Partial<Tag>[];
   image?: File;
+  explanation?: string;
 }): Promise<{ data?: QuizOX; error?: PostgrestError }> {
   const { image, tags, ...newQuizOX } = postData;
   const { data: quizOX, error: quizOXError } = await supabase
@@ -153,15 +154,15 @@ export async function deleteQuizOX(id: string): Promise<boolean> {
 
 /** 객관식 퀴즈 **/
 
-export async function getQuizChoiceList(): Promise<{
-  data?: QuizChoice[];
+export async function getQuizMCList(): Promise<{
+  data?: QuizMC[];
   error?: PostgrestError;
 }> {
   const { data, error } = await supabase
-    .from("quiz_choice")
+    .from("quiz_mc")
     .select(
       `*,
-      quiz_choice_tags!left (tag (id, name))
+      quiz_mc_tags!left (tag (id, name))
     `
     )
     .order("updated_at", { ascending: false });
@@ -173,20 +174,20 @@ export async function getQuizChoiceList(): Promise<{
 
   const result = data.map((quiz) => ({
     ...quiz,
-    tags: quiz.quiz_choice_tags
-      ? (quiz.quiz_choice_tags.map((st: any) => st.tag) as Tag[])
+    tags: quiz.quiz_mc_tags
+      ? (quiz.quiz_mc_tags.map((st: any) => st.tag) as Tag[])
       : [],
   }));
 
-  return { data: result as QuizChoice[] };
+  return { data: result as QuizMC[] };
 }
 
-export async function getQuizChoice(
+export async function getQuizMC(
   id: string
-): Promise<{ data?: QuizChoice; error?: Partial<PostgrestError> }> {
+): Promise<{ data?: QuizMC; error?: Partial<PostgrestError> }> {
   const { data, error } = await supabase
-    .from("quiz_choice")
-    .select(`*, quiz_choice_tags!left (tag (id, name))`)
+    .from("quiz_mc")
+    .select(`*, quiz_mc_tags!left (tag (id, name))`)
     .eq("id", id);
 
   if (error) {
@@ -203,35 +204,36 @@ export async function getQuizChoice(
 
   const result = {
     ...data[0],
-    tags: data[0].quiz_choice_tags
-      ? (data[0].quiz_choice_tags.map((st: any) => st.tag) as Tag[])
+    tags: data[0].quiz_mc_tags
+      ? (data[0].quiz_mc_tags.map((st: any) => st.tag) as Tag[])
       : [],
   };
 
-  return { data: result as QuizChoice };
+  return { data: result as QuizMC };
 }
 
-export async function addQuizChoice(postData: {
+export async function addQuizMC(postData: {
   content: string;
   choices: string[];
   answer: number;
   tags: Partial<Tag>[];
   image?: File;
-}): Promise<{ data?: QuizChoice; error?: PostgrestError }> {
-  const { image, tags, ...newQuizChoice } = postData;
-  const { data: quizChoice, error: quizChoiceError } = await supabase
-    .from("quiz_choice")
-    .insert(newQuizChoice)
+  explanation?: string;
+}): Promise<{ data?: QuizMC; error?: PostgrestError }> {
+  const { image, tags, ...newQuizMC } = postData;
+  const { data: quizMC, error: quizMCError } = await supabase
+    .from("quiz_mc")
+    .insert(newQuizMC)
     .select()
     .single();
-  if (quizChoiceError || !quizChoice) {
-    return { error: quizChoiceError || undefined };
+  if (quizMCError || !quizMC) {
+    return { error: quizMCError || undefined };
   }
 
   if (tags) {
     await supabase.from("quiz_ox_tags").insert(
       tags.map((tag) => ({
-        quiz_id: quizChoice.id,
+        quiz_id: quizMC.id,
         tag_id: tag.id,
       }))
     );
@@ -241,7 +243,7 @@ export async function addQuizChoice(postData: {
     const { data: imgUrl, error: imgError } = await addImageToStorage(
       "quiz",
       image,
-      `${quizChoice.id}/image.png`
+      `${quizMC.id}/image.png`
     );
     if (imgError || !imgUrl) {
       return { error: imgError };
@@ -250,15 +252,15 @@ export async function addQuizChoice(postData: {
     await supabase
       .from("quiz_ox")
       .update({ image: imgUrl })
-      .eq("id", quizChoice.id);
+      .eq("id", quizMC.id);
 
-    quizChoice.image = imgUrl;
+    quizMC.image = imgUrl;
   }
 
-  return { data: quizChoice as QuizChoice };
+  return { data: quizMC as QuizMC };
 }
 
-export async function updateQuizChoice(newQuizChoice: {
+export async function updateQuizMC(newQuizMC: {
   id: string;
   content?: string;
   choices?: string[];
@@ -266,12 +268,12 @@ export async function updateQuizChoice(newQuizChoice: {
   tags?: Partial<Tag>[];
   image?: string;
 }): Promise<boolean> {
-  const { id, tags, ...rest } = newQuizChoice;
+  const { id, tags, ...rest } = newQuizMC;
 
   if (tags) {
     console.log(tags, rest);
-    await supabase.from("quiz_choice_tags").delete().eq("quiz_id", id);
-    await supabase.from("quiz_choice_tags").insert(
+    await supabase.from("quiz_mc_tags").delete().eq("quiz_id", id);
+    await supabase.from("quiz_mc_tags").insert(
       tags.map((tag) => ({
         quiz_id: id,
         tag_id: tag.id,
@@ -279,10 +281,7 @@ export async function updateQuizChoice(newQuizChoice: {
     );
   }
   if (rest) {
-    const { error } = await supabase
-      .from("quiz_choice")
-      .update(rest)
-      .eq("id", id);
+    const { error } = await supabase.from("quiz_mc").update(rest).eq("id", id);
     if (error) {
       console.error(error);
       return false;
@@ -292,11 +291,8 @@ export async function updateQuizChoice(newQuizChoice: {
   return true;
 }
 
-export async function deleteQuizChoice(id: string): Promise<boolean> {
-  const { error } = await createClient()
-    .from("quiz_choice")
-    .delete()
-    .eq("id", id);
+export async function deleteQuizMC(id: string): Promise<boolean> {
+  const { error } = await createClient().from("quiz_mc").delete().eq("id", id);
 
   if (error) {
     console.error(error);

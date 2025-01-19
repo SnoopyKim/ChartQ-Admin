@@ -3,7 +3,7 @@
 import { Button } from "@/components/shadcn/button";
 import { Input } from "@/components/shadcn/input";
 import ImageUploader from "@/components/ui/image-uploader";
-import { QuizChoice } from "@/types/quiz";
+import { QuizMC } from "@/types/quiz";
 import { Label } from "@/components/shadcn/label";
 import { useEffect, useState } from "react";
 import Tag from "@/types/tag";
@@ -14,17 +14,18 @@ import { RadioGroup, RadioGroupItem } from "@/components/shadcn/radio-group";
 import Icon from "@/components/ui/icon";
 import { useDialog } from "@/hooks/use-dialog";
 
-export default function QuizChoiceForm({
+export default function QuizMCForm({
   defaultValue,
   onSubmit,
 }: {
-  defaultValue?: QuizChoice;
+  defaultValue?: QuizMC;
   onSubmit: (data: {
     content: string;
     answer: number;
     choices: string[];
     tags: Partial<Tag>[];
     image?: File;
+    explanation?: string;
   }) => Promise<void>;
 }) {
   const { openDialog } = useDialog();
@@ -52,11 +53,12 @@ export default function QuizChoiceForm({
 
     const formData = new FormData(e.target as HTMLFormElement);
     const content = formData.get("quiz-content") as string;
+    const explanation = formData.get("quiz-explanation") as string;
 
-    if (!answer) {
+    if (choices.length === 0) {
       openDialog({
         title: "퀴즈 추가 불가",
-        description: "정답을 선택해주세요",
+        description: "선택지를 입력하세요",
       });
       return;
     }
@@ -64,9 +66,10 @@ export default function QuizChoiceForm({
     await onSubmit({
       content,
       choices,
-      answer,
+      answer: answer ?? 0,
       tags: selectedTags,
       image: uploadedImage ?? undefined,
+      explanation,
     });
   };
 
@@ -167,6 +170,16 @@ export default function QuizChoiceForm({
                 <Icon name="plus" />
               </Button>
             </RadioGroup>
+          </div>
+          <div className="mt-4">
+            <Label htmlFor="quiz-explanation">풀이</Label>
+            <Input
+              id="quiz-explanation"
+              name="quiz-explanation"
+              defaultValue={defaultValue?.explanation}
+              placeholder="풀이를 입력해주세요"
+              className="mt-2"
+            />
           </div>
         </div>
         <ImageUploader

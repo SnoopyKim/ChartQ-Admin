@@ -6,7 +6,7 @@ import { SearchBar } from "@/components/search-bar";
 import { QuizCard } from "./components/quiz-card";
 import Icon from "@/components/ui/icon";
 import { Quiz } from "@/types/quiz";
-import { getQuizChoiceList, getQuizOXList } from "@/services/quiz";
+import { getQuizMCList, getQuizOXList } from "@/services/quiz";
 import { Tabs, TabsList, TabsTrigger } from "@/components/shadcn/tabs";
 import { DialogTitle } from "@/components/shadcn/dialog";
 import {
@@ -31,7 +31,7 @@ export default function StudyListPage() {
         setFetching(false);
       });
     } else {
-      getQuizChoiceList().then((res) => {
+      getQuizMCList().then((res) => {
         setQuizList(res.data!);
         setFetching(false);
       });
@@ -63,7 +63,7 @@ export default function StudyListPage() {
               <Link href="/quiz/new?type=ox">OX</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href="/quiz/new?type=choice">객관식</Link>
+              <Link href="/quiz/new?type=mc">객관식</Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -75,7 +75,7 @@ export default function StudyListPage() {
         >
           <TabsList>
             <TabsTrigger value="ox">OX</TabsTrigger>
-            <TabsTrigger value="choice">객관식</TabsTrigger>
+            <TabsTrigger value="mc">객관식</TabsTrigger>
           </TabsList>
         </Tabs>
       </div>

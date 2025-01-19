@@ -3,29 +3,30 @@
 import QuizOXForm from "../../components/quiz-ox-form";
 import { toast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
-import { QuizChoice, QuizOX } from "@/types/quiz";
+import { QuizMC, QuizOX } from "@/types/quiz";
 import Tag from "@/types/tag";
 import { useRouter } from "next/navigation";
 import { useDialog } from "@/hooks/use-dialog";
 import Icon from "@/components/ui/icon";
 import {
   deleteQuizOX,
-  getQuizChoice,
+  getQuizMC,
   getQuizOX,
-  updateQuizChoice,
+  updateQuizMC,
   updateQuizOX,
 } from "@/services/quiz";
 import { addImageToStorage } from "@/services/study";
-import QuizChoiceForm from "../../components/quiz-choice-form";
+import QuizMCForm from "../../components/quiz-mc-form";
+import { Button } from "@/components/shadcn/button";
 
-export default function QuizOXEditPage({ params }: { params: { id: string } }) {
+export default function QuizMCEditPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const { openDialog } = useDialog();
-  const [quiz, setQuiz] = useState<QuizChoice>();
+  const [quiz, setQuiz] = useState<QuizMC>();
 
   useEffect(() => {
-    const fetchQuizChoice = async () => {
-      const { data, error } = await getQuizChoice(params.id);
+    const fetchQuizMC = async () => {
+      const { data, error } = await getQuizMC(params.id);
       if (error || !data) {
         toast({
           variant: "error",
@@ -39,22 +40,24 @@ export default function QuizOXEditPage({ params }: { params: { id: string } }) {
       }
       setQuiz(data);
     };
-    fetchQuizChoice();
+    fetchQuizMC();
   }, [params.id]);
 
-  const handleUpdateQuizChoice = async (data: {
+  const handleUpdateQuizMC = async (data: {
     content: string;
     answer: number;
     choices: string[];
     tags: Partial<Tag>[];
     image?: File;
+    explanation?: string;
   }) => {
-    const newQuizChoice: any = {
+    const newQuizMC: any = {
       id: params.id,
       content: data.content,
       answer: data.answer,
       choices: data.choices,
       tags: data.tags,
+      explanation: data.explanation,
     };
 
     if (data.image) {
@@ -66,9 +69,9 @@ export default function QuizOXEditPage({ params }: { params: { id: string } }) {
       if (imgError || !imgUrl) {
         return;
       }
-      newQuizChoice.image = imgUrl;
+      newQuizMC.image = imgUrl;
     }
-    const result = await updateQuizChoice(newQuizChoice);
+    const result = await updateQuizMC(newQuizMC);
     if (result) {
       toast({
         variant: "success",
@@ -77,7 +80,7 @@ export default function QuizOXEditPage({ params }: { params: { id: string } }) {
     }
   };
 
-  const handleDeleteQuizChoice = async () => {
+  const handleDeleteQuizMC = async () => {
     const isConfirmed = await openDialog({
       title: "퀴즈 삭제",
       description: "정말로 삭제하시겠습니까?",
@@ -106,11 +109,19 @@ export default function QuizOXEditPage({ params }: { params: { id: string } }) {
         <Icon
           name="trash"
           className="w-10 h-10 text-error cursor-pointer p-2 hover:bg-error/10 rounded-md"
-          onClick={handleDeleteQuizChoice}
+          onClick={handleDeleteQuizMC}
         />
+        <div className="flex-1"></div>
+        <Button
+          variant="outline"
+          className="text-base"
+          onClick={() => router.push("/quiz")}
+        >
+          목록으로
+        </Button>
       </div>
       <div>
-        <QuizChoiceForm defaultValue={quiz} onSubmit={handleUpdateQuizChoice} />
+        <QuizMCForm defaultValue={quiz} onSubmit={handleUpdateQuizMC} />
       </div>
     </>
   );

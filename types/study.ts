@@ -4,6 +4,8 @@ type Study = {
   Row: {
     id: string;
     title: string;
+    subtitle?: string;
+    order?: number;
     tags?: Partial<Tag>[];
     image?: string;
     content?: string;
@@ -11,12 +13,15 @@ type Study = {
   };
   Insert: {
     title: string;
+    subtitle?: string;
     tags?: Partial<Tag>[];
     image?: string;
   };
   Update: {
     id: string;
     title?: string;
+    subtitle?: string;
+    order?: number;
     tags?: Partial<Tag>[];
     image?: string;
   };
