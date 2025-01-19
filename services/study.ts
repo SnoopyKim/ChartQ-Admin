@@ -15,7 +15,7 @@ export async function getStudiesByTag(tagId: string): Promise<{
       "study(id, title, subtitle, order, image, updated_at, study_tags(tag(*)))"
     ) // studies 테이블의 데이터를 가져옴
     .eq("tag_id", tagId)
-    .order("order", { foreignTable: "study", ascending: true });
+    .order("study(order)", { ascending: true });
 
   if (error) {
     console.error(error);
@@ -23,15 +23,13 @@ export async function getStudiesByTag(tagId: string): Promise<{
   }
 
   // 응답 데이터 구조 정리
-  const formattedData = data
-    ?.map((d: { study: any }) => ({
-      id: d.study.id,
-      title: d.study.title,
-      image: d.study.image,
-      tags: d.study.study_tags.map((st: any) => st.tag) as Tag[],
-      updated_at: d.study.updated_at,
-    }))
-    .reverse();
+  const formattedData = data?.map((d: { study: any }) => ({
+    id: d.study.id,
+    title: d.study.title,
+    image: d.study.image,
+    tags: d.study.study_tags.map((st: any) => st.tag) as Tag[],
+    updated_at: d.study.updated_at,
+  }));
 
   return { data: formattedData as Study["Row"][] };
 }

@@ -11,6 +11,7 @@ import { getTagList } from "@/services/tag";
 import { Badge } from "@/components/shadcn/badge";
 import { Switch } from "@/components/shadcn/switch";
 import Icon from "@/components/ui/icon";
+import { Textarea } from "@/components/shadcn/textarea";
 
 export default function QuizOXForm({
   defaultValue,
@@ -72,6 +73,12 @@ export default function QuizOXForm({
             defaultValue={defaultValue?.content}
             placeholder="문제를 입력해주세요"
             className="mt-2 mb-4"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                document.getElementById("quiz-explanation")?.focus();
+              }
+            }}
             required
           />
           <Label>
@@ -118,7 +125,7 @@ export default function QuizOXForm({
             )}
           </div>
           <Label htmlFor="quiz-explanation">풀이</Label>
-          <Input
+          <Textarea
             id="quiz-explanation"
             name="quiz-explanation"
             defaultValue={defaultValue?.explanation}

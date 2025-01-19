@@ -13,6 +13,7 @@ import { Switch } from "@/components/shadcn/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/shadcn/radio-group";
 import Icon from "@/components/ui/icon";
 import { useDialog } from "@/hooks/use-dialog";
+import { Textarea } from "@/components/shadcn/textarea";
 
 export default function QuizMCForm({
   defaultValue,
@@ -173,7 +174,7 @@ export default function QuizMCForm({
           </div>
           <div className="mt-4">
             <Label htmlFor="quiz-explanation">풀이</Label>
-            <Input
+            <Textarea
               id="quiz-explanation"
               name="quiz-explanation"
               defaultValue={defaultValue?.explanation}

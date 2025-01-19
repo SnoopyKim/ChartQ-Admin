@@ -121,15 +121,13 @@ export async function updateQuizOX(newQuizOX: {
   const { id, tags, ...rest } = newQuizOX;
 
   if (tags) {
-    console.log(tags, rest);
-    const res1 = await supabase.from("quiz_ox_tags").delete().eq("quiz_id", id);
-    const res2 = await supabase.from("quiz_ox_tags").insert(
+    await supabase.from("quiz_ox_tags").delete().eq("quiz_id", id);
+    await supabase.from("quiz_ox_tags").insert(
       tags.map((tag) => ({
         quiz_id: id,
         tag_id: tag.id,
       }))
     );
-    console.log(res1, res2);
   }
   if (rest) {
     const { error } = await supabase.from("quiz_ox").update(rest).eq("id", id);
@@ -271,7 +269,6 @@ export async function updateQuizMC(newQuizMC: {
   const { id, tags, ...rest } = newQuizMC;
 
   if (tags) {
-    console.log(tags, rest);
     await supabase.from("quiz_mc_tags").delete().eq("quiz_id", id);
     await supabase.from("quiz_mc_tags").insert(
       tags.map((tag) => ({

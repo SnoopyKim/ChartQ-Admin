@@ -37,10 +37,8 @@ export default function StudyForm({
     setSelectedTags(defaultValue?.tags ?? []);
   }, [defaultValue]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); // 폼의 기본 제출 동작 방지
-
-    const formData = new FormData(e.target as HTMLFormElement);
+  const handleSubmit = async (formData: FormData) => {
+    // const formData = new FormData(e.target as HTMLFormElement);
     const title = formData.get("title") as string;
     const subtitle = formData.get("subtitle") as string;
 
@@ -53,22 +51,30 @@ export default function StudyForm({
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form>
       <div className="grid grid-cols-2 gap-4">
         <div>
           <Label htmlFor="title">제목</Label>
           <Input
             id="title"
             name="title"
+            type="text"
             defaultValue={defaultValue?.title}
             placeholder="제목을 입력해주세요"
             className="mt-2 mb-4"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                document.getElementById("subtitle")?.focus();
+              }
+            }}
             required
           />
           <Label htmlFor="subtitle">부제목</Label>
           <Input
             id="subtitle"
             name="subtitle"
+            type="text"
             defaultValue={defaultValue?.subtitle}
             placeholder="부제목을 입력해주세요"
             className="mt-2 mb-4"
@@ -109,7 +115,7 @@ export default function StudyForm({
       </div>
 
       <div className="flex justify-end items-center mt-4">
-        <Button variant={"default"} type="submit">
+        <Button variant={"default"} type="submit" formAction={handleSubmit}>
           {defaultValue ? "수정하기" : "추가하기"}
         </Button>
       </div>
