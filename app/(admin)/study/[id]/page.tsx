@@ -57,12 +57,14 @@ export default function StudyEditPage({
     subtitle: string;
     tags: Partial<Tag>[];
     image?: File;
+    is_premium: boolean;
   }) => {
     const newStudy: any = {
       id: params.id,
       title: data.title,
       subtitle: data.subtitle,
       tags: data.tags,
+      is_premium: data.is_premium,
     };
 
     if (data.image) {

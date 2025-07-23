@@ -12,7 +12,7 @@ export async function getStudiesByTag(tagId: string): Promise<{
   const { data, error } = await supabase
     .from("study_tags")
     .select(
-      "study(id, title, subtitle, order, image, updated_at, study_tags(tag(*)))"
+      "study(id, title, subtitle, order, image, updated_at, is_premium, study_tags(tag(*)))"
     ) // studies 테이블의 데이터를 가져옴
     .eq("tag_id", tagId)
     .order("study(order)", { ascending: true });
@@ -29,6 +29,7 @@ export async function getStudiesByTag(tagId: string): Promise<{
     image: d.study.image,
     tags: d.study.study_tags.map((st: any) => st.tag) as Tag[],
     updated_at: d.study.updated_at,
+    is_premium: d.study.is_premium,
   }));
 
   return { data: formattedData as Study["Row"][] };
@@ -42,7 +43,7 @@ export async function getStudiesWithNoTags(): Promise<{
   const { data, error } = await supabase
     .from("study")
     .select(
-      `id, title, subtitle, order, image, updated_at,
+      `id, title, subtitle, order, image, updated_at, is_premium,
       study_tags!left (tag (id, name))
     `
     )
@@ -70,7 +71,7 @@ export async function getStudies(): Promise<{
   const { data, error } = await supabase
     .from("study")
     .select(
-      `id, title, subtitle, order, image, updated_at,
+      `id, title, subtitle, order, image, updated_at, is_premium,
       study_tags!left (tag (id, name))
     `
     )
@@ -127,11 +128,12 @@ export async function addStudy(postData: {
   subtitle?: string;
   tags: Partial<Tag>[];
   image?: File;
+  is_premium?: boolean;
 }): Promise<{ data?: Study["Row"]; error?: PostgrestError }> {
-  const { image, tags, ...newStudy } = postData;
+  const { image, tags, is_premium = false, ...newStudy } = postData;
   const { data: study, error: studyError } = await supabase
     .from("study")
-    .insert(newStudy)
+    .insert({ ...newStudy, is_premium })
     .select()
     .single();
   if (studyError || !study) {
@@ -171,6 +173,7 @@ export async function updateStudy(newStudy: {
   subtitle?: string;
   tags?: Partial<Tag>[];
   image?: string;
+  is_premium?: boolean;
 }): Promise<boolean> {
   const { id, tags, ...rest } = newStudy;
 

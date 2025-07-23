@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import Tag from "@/types/tag";
 import { getTagList } from "@/services/tag";
 import { Badge } from "@/components/shadcn/badge";
+import { Switch } from "@/components/shadcn/switch";
 
 export default function StudyForm({
   defaultValue,
@@ -20,11 +21,13 @@ export default function StudyForm({
     subtitle: string;
     tags: Partial<Tag>[];
     image?: File;
+    is_premium: boolean;
   }) => Promise<void>;
 }) {
   const [tagList, setTagList] = useState<Tag[]>([]);
   const [selectedTags, setSelectedTags] = useState<Partial<Tag>[]>([]);
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
+  const [isPremium, setIsPremium] = useState(defaultValue?.is_premium ?? false);
 
   useEffect(() => {
     getTagList().then((res) => {
@@ -35,6 +38,7 @@ export default function StudyForm({
 
   useEffect(() => {
     setSelectedTags(defaultValue?.tags ?? []);
+    setIsPremium(defaultValue?.is_premium ?? false);
   }, [defaultValue]);
 
   const handleSubmit = async (formData: FormData) => {
@@ -47,6 +51,7 @@ export default function StudyForm({
       subtitle,
       tags: selectedTags,
       image: uploadedImage ?? undefined,
+      is_premium: isPremium,
     });
   };
 
@@ -54,6 +59,19 @@ export default function StudyForm({
     <form>
       <div className="grid grid-cols-2 gap-4">
         <div>
+          <div className="mb-4">
+            <Label htmlFor="is_premium">프리미엄 콘텐츠</Label>
+            <div className="flex items-center space-x-2 mt-2">
+              <Switch
+                id="is_premium"
+                checked={isPremium}
+                onCheckedChange={setIsPremium}
+              />
+              <span className="text-sm text-gray-600">
+                {isPremium ? "프리미엄" : "일반"}
+              </span>
+            </div>
+          </div>
           <Label htmlFor="title">제목</Label>
           <Input
             id="title"

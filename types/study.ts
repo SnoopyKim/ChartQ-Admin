@@ -10,12 +10,14 @@ type Study = {
     image?: string;
     content?: string;
     updated_at: string;
+    is_premium?: boolean;
   };
   Insert: {
     title: string;
     subtitle?: string;
     tags?: Partial<Tag>[];
     image?: string;
+    is_premium?: boolean;
   };
   Update: {
     id: string;
@@ -24,6 +26,7 @@ type Study = {
     order?: number;
     tags?: Partial<Tag>[];
     image?: string;
+    is_premium?: boolean;
   };
   Relationships: [];
 };

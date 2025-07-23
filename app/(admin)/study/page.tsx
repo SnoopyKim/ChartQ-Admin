@@ -20,6 +20,9 @@ export default function StudyListPage() {
   const [selectedTag, setSelectedTag] = useState("all");
   const [studyList, setStudyList] = useState<Study["Row"][]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [premiumFilter, setPremiumFilter] = useState<
+    "all" | "premium" | "free"
+  >("all");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,9 +50,17 @@ export default function StudyListPage() {
     }
   }, [selectedTag]);
 
-  const filteredStudyList = studyList.filter((study) =>
-    study.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredStudyList = studyList.filter((study) => {
+    const matchesSearch = study.title
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesPremium =
+      premiumFilter === "all" ||
+      (premiumFilter === "premium" && study.is_premium) ||
+      (premiumFilter === "free" && !study.is_premium);
+
+    return matchesSearch && matchesPremium;
+  });
 
   return (
     <div className="container">
@@ -72,30 +83,72 @@ export default function StudyListPage() {
           </Link>
         </div>
       </div>
-      <div className="flex gap-2 flex-wrap my-2">
-        <Badge
-          variant={selectedTag === "all" ? "default" : "outline"}
-          onClick={() => setSelectedTag("all")}
-        >
-          전체
-        </Badge>
-        <Badge
-          variant={selectedTag === "none" ? "default" : "outline"}
-          onClick={() => setSelectedTag("none")}
-        >
-          태그 없음
-        </Badge>
-        {tagList.map((tag) => (
+      {/* 프리미엄 필터 섹션 */}
+      <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200 my-2">
+        <div className="flex items-center gap-2 mb-3">
+          <Icon name="puzzle" className="w-4 h-4 text-yellow-600" />
+          <span className="text-sm font-medium text-yellow-700">
+            프리미엄 필터
+          </span>
+        </div>
+        <div className="flex gap-2 flex-wrap">
           <Badge
-            key={tag.id}
-            variant={selectedTag === tag.id ? "default" : "outline"}
-            onClick={() =>
-              setSelectedTag((prev) => (prev === tag.id ? "" : tag.id))
-            }
+            variant={premiumFilter === "all" ? "default" : "outline"}
+            onClick={() => setPremiumFilter("all")}
+            className="cursor-pointer"
           >
-            {tag.name}
+            전체
           </Badge>
-        ))}
+          <Badge
+            variant={premiumFilter === "premium" ? "default" : "outline"}
+            onClick={() => setPremiumFilter("premium")}
+            className="cursor-pointer"
+          >
+            프리미엄만
+          </Badge>
+          <Badge
+            variant={premiumFilter === "free" ? "default" : "outline"}
+            onClick={() => setPremiumFilter("free")}
+            className="cursor-pointer"
+          >
+            무료만
+          </Badge>
+        </div>
+      </div>
+      {/* 태그 필터 섹션 */}
+      <div className="bg-gray-50 p-4 rounded-lg border my-2">
+        <div className="flex items-center gap-2 mb-3">
+          <Icon name="tag" className="w-4 h-4 text-gray-600" />
+          <span className="text-sm font-medium text-gray-700">태그별 필터</span>
+        </div>
+        <div className="flex gap-2 flex-wrap">
+          <Badge
+            variant={selectedTag === "all" ? "default" : "outline"}
+            onClick={() => setSelectedTag("all")}
+            className="cursor-pointer"
+          >
+            전체
+          </Badge>
+          <Badge
+            variant={selectedTag === "none" ? "default" : "outline"}
+            onClick={() => setSelectedTag("none")}
+            className="cursor-pointer"
+          >
+            태그 없음
+          </Badge>
+          {tagList.map((tag) => (
+            <Badge
+              key={tag.id}
+              variant={selectedTag === tag.id ? "default" : "outline"}
+              onClick={() =>
+                setSelectedTag((prev) => (prev === tag.id ? "" : tag.id))
+              }
+              className="cursor-pointer"
+            >
+              {tag.name}
+            </Badge>
+          ))}
+        </div>
       </div>
       <div className="container">
         <SearchBar
@@ -108,11 +161,7 @@ export default function StudyListPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-6">
         {filteredStudyList.map((study) => (
           <Link href={`/study/${study.id}`} key={study.id}>
-            <StudyCard
-              title={study.title}
-              image={study.image}
-              updatedAt={study.updated_at}
-            />
+            <StudyCard study={study} />
           </Link>
         ))}
       </div>
