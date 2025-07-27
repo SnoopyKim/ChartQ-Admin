@@ -16,6 +16,7 @@ export default function Sidebar() {
         <NavItem href="/study" icon={"library"} title="차트자료 관리" />
         <NavItem href="/quiz" icon={"puzzle"} title="퀴즈 관리" />
         <NavItem href="/tag" icon={"tag"} title="태그 관리" />
+        <NavItem href="/system" icon={"server"} title="시스템 관리" />
       </div>
       <div className="">
         <SignOutButton />

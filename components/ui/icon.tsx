@@ -33,6 +33,7 @@ import {
   LoaderCircle,
   ArrowUpDown,
   HelpCircle,
+  Server,
 } from "lucide-react";
 
 const icons = {
@@ -69,6 +70,7 @@ const icons = {
   loading: LoaderCircle,
   order: ArrowUpDown,
   help: HelpCircle,
+  server: Server,
 };
 
 export type IconType = keyof typeof icons;
