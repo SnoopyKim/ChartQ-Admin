@@ -1,7 +1,22 @@
-import { Tables } from "@/database.types";
+export interface AppVersion {
+  id: number;
+  latest_version: string;
+  minimum_version: string;
+  release_notes: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
 
-export type AppVersion = Tables<"app_versions">;
-export type ServiceStatus = Tables<"service_status">;
+export interface ServiceStatus {
+  id: number;
+  is_maintenance_mode: boolean;
+  maintenance_message: string | null;
+  maintenance_start_time: string | null;
+  maintenance_end_time: string | null;
+  created_at: string;
+  updated_at: string;
+}
 
 export interface AppVersionForm {
   latest_version: string;
