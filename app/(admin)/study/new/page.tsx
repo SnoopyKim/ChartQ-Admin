@@ -16,6 +16,7 @@ export default function NewStudyPage() {
     subtitle: string;
     tags: Partial<Tag>[];
     image?: File;
+    is_premium: boolean;
   }) => {
     const { data: result, error } = await addStudy(data);
     if (error || !result) {

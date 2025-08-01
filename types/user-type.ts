@@ -2,7 +2,7 @@ const UserType = {
   ADMIN: "ADMIN",
   HOBBY: "HOBBY",
   BASIC: "BASIC",
-  SMART: "SMART",
+  PLUS: "PLUS",
   PRO: "PRO",
 };
 
