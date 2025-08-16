@@ -12,7 +12,7 @@ export async function getStudiesByTag(tagId: string): Promise<{
   const { data, error } = await supabase
     .from("study_tags")
     .select(
-      "study(id, title, subtitle, order, image, updated_at, is_premium, study_tags(tag(*)))"
+      "study(id, title, subtitle, order, image, updated_at, is_premium, study_tags(tag(*)), study_view_counts(view_count))"
     ) // studies 테이블의 데이터를 가져옴
     .eq("tag_id", tagId)
     .order("study(order)", { ascending: true });
@@ -30,6 +30,7 @@ export async function getStudiesByTag(tagId: string): Promise<{
     tags: d.study.study_tags.map((st: any) => st.tag) as Tag[],
     updated_at: d.study.updated_at,
     is_premium: d.study.is_premium,
+    view_count: d.study.study_view_counts?.[0]?.view_count || 0,
   }));
 
   return { data: formattedData as Study["Row"][] };
@@ -44,7 +45,8 @@ export async function getStudiesWithNoTags(): Promise<{
     .from("study")
     .select(
       `id, title, subtitle, order, image, updated_at, is_premium,
-      study_tags!left (tag (id, name))
+      study_tags!left (tag (id, name)),
+      study_view_counts!left (view_count)
     `
     )
     .is("study_tags", null) // study_tags가 없는 경우만 가져옴
@@ -59,6 +61,7 @@ export async function getStudiesWithNoTags(): Promise<{
   const result = data.map((study) => ({
     ...study,
     tags: [],
+    view_count: study.study_view_counts?.[0]?.view_count || 0,
   }));
 
   return { data: result as Study["Row"][] };
@@ -72,7 +75,8 @@ export async function getStudies(): Promise<{
     .from("study")
     .select(
       `id, title, subtitle, order, image, updated_at, is_premium,
-      study_tags!left (tag (id, name))
+      study_tags!left (tag (id, name)),
+      study_view_counts!left (view_count)
     `
     )
     .order("order", { ascending: true });
@@ -88,6 +92,7 @@ export async function getStudies(): Promise<{
     tags: study.study_tags
       ? study.study_tags.map((st: any) => st.tag as Tag)
       : [],
+    view_count: study.study_view_counts?.[0]?.view_count || 0,
   }));
 
   return { data: result as Study["Row"][] };

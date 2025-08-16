@@ -8,6 +8,7 @@ import {
 } from "@/components/shadcn/card";
 import { Badge } from "@/components/shadcn/badge";
 import Study from "@/types/study";
+import { StudyViewCount } from "./study-view-count";
 
 interface StudyCardProps {
   study: Study["Row"];
@@ -45,6 +46,7 @@ export function StudyCard({ study }: StudyCardProps) {
         <span className="text-sm text-muted-foreground">
           {new Date(study.updated_at).toLocaleDateString()}
         </span>
+        <StudyViewCount studyId={study.id} compact />
       </CardFooter>
     </Card>
   );

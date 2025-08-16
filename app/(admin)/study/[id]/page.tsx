@@ -18,6 +18,7 @@ import Tag from "@/types/tag";
 import { useRouter } from "next/navigation";
 import { useDialog } from "@/hooks/use-dialog";
 import Icon from "@/components/ui/icon";
+import { StudyViewCount } from "../components/study-view-count";
 
 export default function StudyEditPage({
   params,
@@ -201,13 +202,19 @@ export default function StudyEditPage({
           </Link>
         )}
       </div>
-      <div className="flex gap-2 items-center">
-        <h1 className="my-4">차트자료 편집</h1>
-        <Icon
-          name="trash"
-          className="w-10 h-10 text-error cursor-pointer p-2 hover:bg-error/10 rounded-md"
-          onClick={handleDeleteStudy}
-        />
+      <div className="flex gap-2 items-center justify-between">
+        <div className="flex gap-2 items-center">
+          <h1 className="my-4">차트자료 편집</h1>
+          <Icon
+            name="trash"
+            className="w-10 h-10 text-error cursor-pointer p-2 hover:bg-error/10 rounded-md"
+            onClick={handleDeleteStudy}
+          />
+        </div>
+        {/* 조회수 표시 - 콘텐츠 편집 모드가 아닐 때만 */}
+        {searchParams.step !== "content" && study && (
+          <StudyViewCount studyId={study.id} />
+        )}
       </div>
       <div>
         {searchParams.step === "content" ? (
