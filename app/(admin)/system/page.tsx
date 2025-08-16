@@ -6,12 +6,15 @@ import { getAppVersions, getServiceStatus } from "@/services/system";
 import { AppVersion, ServiceStatus } from "@/types/system";
 import AppVersionCard from "./components/app-version-card";
 import ServiceStatusCard from "./components/service-status-card";
+import CommunityChannelCard from "./components/community-channel-card";
 import { RefreshCw, Server } from "lucide-react";
 import { Button } from "@/components/shadcn/button";
 
 export default function SystemPage() {
   const [currentVersion, setCurrentVersion] = useState<AppVersion | null>(null);
-  const [serviceStatus, setServiceStatus] = useState<ServiceStatus | null>(null);
+  const [serviceStatus, setServiceStatus] = useState<ServiceStatus | null>(
+    null
+  );
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
@@ -22,7 +25,7 @@ export default function SystemPage() {
         getAppVersions(),
         getServiceStatus(),
       ]);
-      
+
       setCurrentVersion(versionData);
       setServiceStatus(statusData);
     } catch (error) {
@@ -88,33 +91,21 @@ export default function SystemPage() {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <AppVersionCard
-            currentVersion={currentVersion}
-            onVersionUpdate={fetchData}
-          />
-          <ServiceStatusCard
-            serviceStatus={serviceStatus}
-            onStatusUpdate={fetchData}
-          />
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <AppVersionCard
+              currentVersion={currentVersion}
+              onVersionUpdate={fetchData}
+            />
+            <ServiceStatusCard
+              serviceStatus={serviceStatus}
+              onStatusUpdate={fetchData}
+            />
+          </div>
+
+          <CommunityChannelCard onUpdate={fetchData} />
         </div>
       )}
-
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <div className="flex items-start gap-3">
-          <div className="flex-shrink-0 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center mt-0.5">
-            <span className="text-white text-xs font-bold">i</span>
-          </div>
-          <div>
-            <h3 className="text-sm font-semibold text-blue-900 mb-1">시스템 관리 안내</h3>
-            <ul className="text-sm text-blue-800 space-y-1">
-              <li>• 새 버전 배포 시 기존 활성 버전은 자동으로 비활성화됩니다</li>
-              <li>• 점검 모드 활성화 시 모든 사용자에게 점검 안내가 표시됩니다</li>
-              <li>• 변경사항은 즉시 적용되므로 신중하게 진행해주세요</li>
-            </ul>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

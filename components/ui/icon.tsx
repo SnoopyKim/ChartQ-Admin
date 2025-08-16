@@ -34,6 +34,7 @@ import {
   ArrowUpDown,
   HelpCircle,
   Server,
+  Eye,
 } from "lucide-react";
 
 const icons = {
@@ -71,6 +72,7 @@ const icons = {
   order: ArrowUpDown,
   help: HelpCircle,
   server: Server,
+  eye: Eye,
 };
 
 export type IconType = keyof typeof icons;

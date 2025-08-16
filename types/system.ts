@@ -36,6 +36,23 @@ export interface SystemStatus {
   service_status: ServiceStatus;
 }
 
+export interface CommunityChannel {
+  id: number;
+  name: string;
+  url: string;
+  icon: string | null;
+  is_active: boolean;
+  order_index: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CommunityChannelForm {
+  name: string;
+  url: string;
+  icon?: string;
+}
+
 export interface AdminVersionStatus {
   latest_version: string;
   minimum_version: string;

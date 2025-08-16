@@ -11,6 +11,7 @@ type Study = {
     content?: string;
     updated_at: string;
     is_premium?: boolean;
+    view_count?: number;
   };
   Insert: {
     title: string;
