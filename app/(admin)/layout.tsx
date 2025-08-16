@@ -1,4 +1,5 @@
 import Sidebar from "@/components/sidebar";
+import { FloatingCommunityButton } from "@/components/community/community-channels";
 
 export default function AdminLayout({
   children,
@@ -13,6 +14,7 @@ export default function AdminLayout({
       <div className="ml-52 flex flex-1 flex-col p-4">
         <div className="flex-1 bg-white rounded-2xl p-6 shadow">{children}</div>
       </div>
+      <FloatingCommunityButton />
     </div>
   );
 }

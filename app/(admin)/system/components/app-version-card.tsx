@@ -125,6 +125,27 @@ export default function AppVersionCard({
             버전 히스토리
           </Button>
         </div>
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+          <div className="flex items-start gap-3">
+            <div className="flex-shrink-0 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center mt-0.5">
+              <span className="text-white text-xs font-bold">i</span>
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-blue-900 mb-1">
+                시스템 관리 안내
+              </h3>
+              <ul className="text-sm text-blue-800 space-y-1">
+                <li>
+                  • 새 버전 배포 시 기존 활성 버전은 자동으로 비활성화됩니다
+                </li>
+                <li>
+                  • 점검 모드 활성화 시 모든 사용자에게 점검 안내가 표시됩니다
+                </li>
+                <li>• 변경사항은 즉시 적용되므로 신중하게 진행해주세요</li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </Card>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
