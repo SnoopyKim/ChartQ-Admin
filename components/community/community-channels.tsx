@@ -72,13 +72,19 @@ export default function CommunityChannels() {
               className="w-full justify-between h-auto p-4 hover:bg-blue-50 hover:border-blue-300 transition-colors"
               onClick={() => handleChannelClick(channel.url)}
             >
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 flex-1 min-w-0">
                 {channel.icon && (
-                  <span className="text-lg">{channel.icon}</span>
+                  <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center overflow-hidden">
+                    {channel.icon.startsWith('http') ? (
+                      <img src={channel.icon} alt="" className="w-full h-full object-contain" />
+                    ) : (
+                      <span className="text-lg">{channel.icon}</span>
+                    )}
+                  </div>
                 )}
-                <div className="text-left">
-                  <div className="font-medium text-gray-900">{channel.name}</div>
-                  <div className="text-xs text-gray-500 truncate max-w-[200px]">
+                <div className="text-left flex-1 min-w-0">
+                  <div className="font-medium text-gray-900 truncate">{channel.name}</div>
+                  <div className="text-xs text-gray-500 truncate">
                     {channel.url}
                   </div>
                 </div>
@@ -131,9 +137,17 @@ export function CommunityChannelButtons() {
           className="flex items-center gap-2"
           onClick={() => handleChannelClick(channel.url)}
         >
-          {channel.icon && <span>{channel.icon}</span>}
-          {channel.name}
-          <ExternalLink className="h-3 w-3" />
+          {channel.icon && (
+            <div className="flex-shrink-0 w-4 h-4 flex items-center justify-center overflow-hidden">
+              {channel.icon.startsWith('http') ? (
+                <img src={channel.icon} alt="" className="w-full h-full object-contain" />
+              ) : (
+                <span className="text-sm">{channel.icon}</span>
+              )}
+            </div>
+          )}
+          <span className="truncate">{channel.name}</span>
+          <ExternalLink className="h-3 w-3 flex-shrink-0" />
         </Button>
       ))}
     </div>
@@ -184,9 +198,17 @@ export function FloatingCommunityButton() {
                 className="w-full justify-start"
                 onClick={() => handleChannelClick(channel.url)}
               >
-                {channel.icon && <span className="mr-2">{channel.icon}</span>}
-                {channel.name}
-                <ExternalLink className="h-3 w-3 ml-auto" />
+                {channel.icon && (
+                  <div className="flex-shrink-0 w-4 h-4 flex items-center justify-center overflow-hidden mr-2">
+                    {channel.icon.startsWith('http') ? (
+                      <img src={channel.icon} alt="" className="w-full h-full object-contain" />
+                    ) : (
+                      <span className="text-sm">{channel.icon}</span>
+                    )}
+                  </div>
+                )}
+                <span className="truncate flex-1">{channel.name}</span>
+                <ExternalLink className="h-3 w-3 ml-2 flex-shrink-0" />
               </Button>
             ))}
           </div>

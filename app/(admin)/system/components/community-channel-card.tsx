@@ -24,7 +24,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/shadcn/alert-dialog";
 import {
   DropdownMenu,
@@ -89,6 +88,7 @@ export default function CommunityChannelCard({
     icon: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [deleteChannelId, setDeleteChannelId] = useState<number | null>(null);
   const { toast } = useToast();
 
   // dnd-kit 센서
@@ -117,6 +117,7 @@ export default function CommunityChannelCard({
   const resetForm = () => {
     setFormData({ name: "", url: "", icon: "" });
     setEditingChannel(null);
+    setIsSubmitting(false);
   };
 
   const handleCreate = async () => {
@@ -139,9 +140,12 @@ export default function CommunityChannelCard({
       });
 
       setIsCreateDialogOpen(false);
-      resetForm();
       fetchChannels();
       onUpdate();
+      // 다이얼로그가 닫힌 후 상태 정리
+      setTimeout(() => {
+        resetForm();
+      }, 100);
     } catch (error) {
       toast({
         title: "채널 생성 실패",
@@ -173,9 +177,12 @@ export default function CommunityChannelCard({
       });
 
       setIsEditDialogOpen(false);
-      resetForm();
       fetchChannels();
       onUpdate();
+      // 다이얼로그가 닫힌 후 상태 정리
+      setTimeout(() => {
+        resetForm();
+      }, 100);
     } catch (error) {
       toast({
         title: "채널 수정 실패",
@@ -187,15 +194,18 @@ export default function CommunityChannelCard({
     }
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDeleteConfirm = async () => {
+    if (!deleteChannelId) return;
+    
     try {
-      await deleteCommunityChannel(id);
+      await deleteCommunityChannel(deleteChannelId);
 
       toast({
         title: "채널 삭제 완료",
         description: "커뮤니티 채널이 삭제되었습니다.",
       });
 
+      setDeleteChannelId(null);
       fetchChannels();
       onUpdate();
     } catch (error) {
@@ -204,6 +214,7 @@ export default function CommunityChannelCard({
         description: "채널 삭제 중 오류가 발생했습니다.",
         variant: "error",
       });
+      setDeleteChannelId(null);
     }
   };
 
@@ -283,6 +294,7 @@ export default function CommunityChannelCard({
   };
 
   const openEditDialog = (channel: CommunityChannel) => {
+    setIsSubmitting(false); // 상태 초기화
     setEditingChannel(channel);
     setFormData({
       name: channel.name,
@@ -324,7 +336,18 @@ export default function CommunityChannelCard({
           </div>
         </div>
 
-        <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+        <Dialog 
+          open={isCreateDialogOpen} 
+          onOpenChange={(open) => {
+            setIsCreateDialogOpen(open);
+            if (!open) {
+              // 다이얼로그가 닫힐 때 상태 정리
+              setTimeout(() => {
+                resetForm();
+              }, 100);
+            }
+          }}
+        >
           <DialogTrigger asChild>
             <Button
               onClick={() => resetForm()}
@@ -380,7 +403,10 @@ export default function CommunityChannelCard({
             <DialogFooter>
               <Button
                 variant="outline"
-                onClick={() => setIsCreateDialogOpen(false)}
+                onClick={() => {
+                  setIsCreateDialogOpen(false);
+                  setTimeout(() => resetForm(), 100);
+                }}
               >
                 취소
               </Button>
@@ -419,7 +445,7 @@ export default function CommunityChannelCard({
                   channel={channel}
                   onEdit={openEditDialog}
                   onToggleActive={handleToggleActive}
-                  onDelete={handleDelete}
+                  onDelete={setDeleteChannelId}
                 />
               ))}
             </div>
@@ -428,7 +454,18 @@ export default function CommunityChannelCard({
       )}
 
       {/* 수정 다이얼로그 */}
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+      <Dialog 
+        open={isEditDialogOpen} 
+        onOpenChange={(open) => {
+          setIsEditDialogOpen(open);
+          if (!open) {
+            // 다이얼로그가 닫힐 때 상태 정리
+            setTimeout(() => {
+              resetForm();
+            }, 100);
+          }
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>커뮤니티 채널 수정</DialogTitle>
@@ -473,7 +510,10 @@ export default function CommunityChannelCard({
           <DialogFooter>
             <Button
               variant="outline"
-              onClick={() => setIsEditDialogOpen(false)}
+              onClick={() => {
+                setIsEditDialogOpen(false);
+                setTimeout(() => resetForm(), 100);
+              }}
             >
               취소
             </Button>
@@ -483,6 +523,27 @@ export default function CommunityChannelCard({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* 삭제 확인 다이얼로그 */}
+      <AlertDialog open={!!deleteChannelId} onOpenChange={() => setDeleteChannelId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>채널 삭제</AlertDialogTitle>
+            <AlertDialogDescription>
+              선택한 채널을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeleteChannelId(null)}>취소</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              삭제
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 }
@@ -495,6 +556,7 @@ interface SortableChannelItemProps {
 }
 
 function SortableChannelItem({ channel, onEdit, onToggleActive, onDelete }: SortableChannelItemProps) {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const {
     attributes,
     listeners,
@@ -529,14 +591,22 @@ function SortableChannelItem({ channel, onEdit, onToggleActive, onDelete }: Sort
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-3 mb-1">
           {channel.icon && (
-            <span className="text-lg">{channel.icon}</span>
+            <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center overflow-hidden">
+              {channel.icon.startsWith('http') ? (
+                <img src={channel.icon} alt="" className="w-full h-full object-contain" />
+              ) : (
+                <span className="text-lg">{channel.icon}</span>
+              )}
+            </div>
           )}
-          <h3 className="font-medium text-gray-900 truncate">
+          <h3 className="font-medium text-gray-900 truncate flex-1 min-w-0">
             {channel.name}
           </h3>
-          <Badge variant={channel.is_active ? "default" : "secondary"}>
-            {channel.is_active ? "활성" : "비활성"}
-          </Badge>
+          <div className="flex-shrink-0">
+            <Badge variant={channel.is_active ? "default" : "secondary"}>
+              {channel.is_active ? "활성" : "비활성"}
+            </Badge>
+          </div>
         </div>
         <div className="flex items-center gap-2 text-sm text-gray-600">
           <ExternalLink className="h-3 w-3" />
@@ -544,14 +614,19 @@ function SortableChannelItem({ channel, onEdit, onToggleActive, onDelete }: Sort
         </div>
       </div>
 
-      <DropdownMenu>
+      <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="sm">
             <MoreVertical className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem onClick={() => onEdit(channel)}>
+          <DropdownMenuItem 
+            onClick={() => {
+              setDropdownOpen(false);
+              setTimeout(() => onEdit(channel), 100);
+            }}
+          >
             <Edit className="h-4 w-4 mr-2" />
             수정
           </DropdownMenuItem>
@@ -571,34 +646,16 @@ function SortableChannelItem({ channel, onEdit, onToggleActive, onDelete }: Sort
             )}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <DropdownMenuItem
-                className="text-red-600 focus:text-red-600"
-                onSelect={(e) => e.preventDefault()}
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                삭제
-              </DropdownMenuItem>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>채널 삭제</AlertDialogTitle>
-                <AlertDialogDescription>
-                  &quot;{channel.name}&quot; 채널을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>취소</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={() => onDelete(channel.id)}
-                  className="bg-red-600 hover:bg-red-700"
-                >
-                  삭제
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <DropdownMenuItem
+            className="text-red-600 focus:text-red-600"
+            onClick={() => {
+              setDropdownOpen(false);
+              setTimeout(() => onDelete(channel.id), 100);
+            }}
+          >
+            <Trash2 className="h-4 w-4 mr-2" />
+            삭제
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
