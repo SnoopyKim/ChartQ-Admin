@@ -35,6 +35,8 @@ import {
   HelpCircle,
   Server,
   Eye,
+  Clipboard,
+  ClipboardList,
 } from "lucide-react";
 
 const icons = {
@@ -73,6 +75,7 @@ const icons = {
   help: HelpCircle,
   server: Server,
   eye: Eye,
+  clipboard: ClipboardList,
 };
 
 export type IconType = keyof typeof icons;

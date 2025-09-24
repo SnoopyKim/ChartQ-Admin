@@ -3,7 +3,12 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/shadcn/button";
 import { Badge } from "@/components/shadcn/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/shadcn/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/shadcn/card";
 import { getActiveCommunityChannels } from "@/services/community";
 import { CommunityChannel } from "@/types/system";
 import { ExternalLink, Users, MessageCircle } from "lucide-react";
@@ -75,15 +80,21 @@ export default function CommunityChannels() {
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 {channel.icon && (
                   <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center overflow-hidden">
-                    {channel.icon.startsWith('http') ? (
-                      <img src={channel.icon} alt="" className="w-full h-full object-contain" />
+                    {channel.icon.startsWith("http") ? (
+                      <img
+                        src={channel.icon}
+                        alt=""
+                        className="w-full h-full object-contain"
+                      />
                     ) : (
                       <span className="text-lg">{channel.icon}</span>
                     )}
                   </div>
                 )}
                 <div className="text-left flex-1 min-w-0">
-                  <div className="font-medium text-gray-900 truncate">{channel.name}</div>
+                  <div className="font-medium text-gray-900 truncate">
+                    {channel.name}
+                  </div>
                   <div className="text-xs text-gray-500 truncate">
                     {channel.url}
                   </div>
@@ -95,133 +106,5 @@ export default function CommunityChannels() {
         </div>
       </CardContent>
     </Card>
-  );
-}
-
-// 간단한 인라인 버튼 버전 (다른 페이지에 임베드용)
-export function CommunityChannelButtons() {
-  const [channels, setChannels] = useState<CommunityChannel[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchChannels = async () => {
-      try {
-        setIsLoading(true);
-        const data = await getActiveCommunityChannels();
-        setChannels(data || []);
-      } catch (error) {
-        console.error("Error fetching community channels:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchChannels();
-  }, []);
-
-  const handleChannelClick = (url: string) => {
-    window.open(url, "_blank", "noopener,noreferrer");
-  };
-
-  if (isLoading || channels.length === 0) {
-    return null;
-  }
-
-  return (
-    <div className="flex flex-wrap gap-2">
-      {channels.map((channel) => (
-        <Button
-          key={channel.id}
-          variant="outline"
-          size="sm"
-          className="flex items-center gap-2"
-          onClick={() => handleChannelClick(channel.url)}
-        >
-          {channel.icon && (
-            <div className="flex-shrink-0 w-4 h-4 flex items-center justify-center overflow-hidden">
-              {channel.icon.startsWith('http') ? (
-                <img src={channel.icon} alt="" className="w-full h-full object-contain" />
-              ) : (
-                <span className="text-sm">{channel.icon}</span>
-              )}
-            </div>
-          )}
-          <span className="truncate">{channel.name}</span>
-          <ExternalLink className="h-3 w-3 flex-shrink-0" />
-        </Button>
-      ))}
-    </div>
-  );
-}
-
-// 플로팅 커뮤니티 버튼 (우하단 고정)
-export function FloatingCommunityButton() {
-  const [channels, setChannels] = useState<CommunityChannel[]>([]);
-  const [isOpen, setIsOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchChannels = async () => {
-      try {
-        setIsLoading(true);
-        const data = await getActiveCommunityChannels();
-        setChannels(data || []);
-      } catch (error) {
-        console.error("Error fetching community channels:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchChannels();
-  }, []);
-
-  const handleChannelClick = (url: string) => {
-    window.open(url, "_blank", "noopener,noreferrer");
-    setIsOpen(false);
-  };
-
-  if (isLoading || channels.length === 0) {
-    return null;
-  }
-
-  return (
-    <div className="fixed bottom-4 right-4 z-50">
-      {isOpen && (
-        <div className="absolute bottom-16 right-0 bg-white rounded-lg shadow-lg border p-2 min-w-[200px]">
-          <div className="space-y-1">
-            {channels.map((channel) => (
-              <Button
-                key={channel.id}
-                variant="ghost"
-                size="sm"
-                className="w-full justify-start"
-                onClick={() => handleChannelClick(channel.url)}
-              >
-                {channel.icon && (
-                  <div className="flex-shrink-0 w-4 h-4 flex items-center justify-center overflow-hidden mr-2">
-                    {channel.icon.startsWith('http') ? (
-                      <img src={channel.icon} alt="" className="w-full h-full object-contain" />
-                    ) : (
-                      <span className="text-sm">{channel.icon}</span>
-                    )}
-                  </div>
-                )}
-                <span className="truncate flex-1">{channel.name}</span>
-                <ExternalLink className="h-3 w-3 ml-2 flex-shrink-0" />
-              </Button>
-            ))}
-          </div>
-        </div>
-      )}
-      
-      <Button
-        size="lg"
-        className="rounded-full h-12 w-12 shadow-lg bg-blue-600 hover:bg-blue-700"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <Users className="h-6 w-6" />
-      </Button>
-    </div>
   );
 }
