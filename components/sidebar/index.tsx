@@ -1,8 +1,6 @@
 import Link from "next/link";
 import SignOutButton from "../ui/button/sign-out";
-import { ChartColumn } from "lucide-react";
 import NavItem from "./item";
-import { TextColorOption } from "../editor/bubble-menu/color-option";
 
 export default function Sidebar() {
   return (
@@ -16,6 +14,7 @@ export default function Sidebar() {
         <NavItem href="/study" icon={"library"} title="차트자료 관리" />
         <NavItem href="/quiz" icon={"puzzle"} title="퀴즈 관리" />
         <NavItem href="/tag" icon={"tag"} title="태그 관리" />
+        <NavItem href="/survey" icon={"clipboard"} title="설문조사 관리" />
         <NavItem href="/system" icon={"server"} title="시스템 관리" />
       </div>
       <div className="">
